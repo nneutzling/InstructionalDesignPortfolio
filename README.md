@@ -8,6 +8,7 @@ Static portfolio site, ready for GitHub Pages.
 - `courses/` — hosted eLearning modules, one folder each, linked from the case studies
   - `alpine-club/` — Alpine Club of Canada Trip Leader Guide, standalone web export (public)
   - `bow-valley/` — Mountains of the Bow Valley, web rebuild of the Storyline interaction (public)
+  - `peak-pmp-sample/` — 8-question public sample of the Peak PMP baseline quiz (full banks stay private)
 
 REDP, PHSA and IPAC are client work: show them with screenshots and video only, never the course files.
 
