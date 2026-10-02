@@ -1,0 +1,19 @@
+{
+  "name": "Nicole Neutzling",
+  "short_name": "Nicole N.",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#141d35",
+  "background_color": "#eef5f9",
+  "display": "browser"
+}
