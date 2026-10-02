@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mountains of the Bow Valley</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Josefin+Sans:wght@400;600&family=Karla:wght@400;500&display=swap">
+<style>
+  /* Layout: one-screen scene. A small 3D planet rises from the lower left; the active peak sits on top,
+     its names set large on the right. A Storyline-style dial in the corner turns the planet. */
+  :root {
+    --sky: #8badd6;
+    --sky-high: #a9c6e6;
+    --ink: #1a2238;
+    --ink-soft: #3b4766;
+    --lake: #33527f;
+    --glow: #9ae0f1;
+    --paper: #f4f8fc;
+    --ember: #e9773b;
+    --display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+    --label: 'Josefin Sans', 'Futura', 'Century Gothic', sans-serif;
+    --body: 'Karla', 'Helvetica Neue', Arial, sans-serif;
+    color-scheme: light;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden;
+    background: linear-gradient(180deg, var(--sky-high) 0%, var(--sky) 55%);
+    color: var(--ink); font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  #scene.dragging { cursor: grabbing; }
+
+  .chrome { position: fixed; inset: 0; pointer-events: none; padding: max(18px, env(safe-area-inset-top, 0px)) 22px max(18px, env(safe-area-inset-bottom, 0px)); }
+  .chrome > * { pointer-events: auto; }
+
+  .topbar { position: absolute; top: max(18px, env(safe-area-inset-top, 0px)); left: 22px; right: 22px; display: flex; align-items: center; gap: 14px; pointer-events: none; }
+  .topbar > * { pointer-events: auto; }
+  .round {
+    width: 52px; height: 52px; border-radius: 50%; flex: none;
+    background: var(--paper); border: 2px solid var(--lake); color: var(--lake);
+    box-shadow: 0 5px 0 rgba(26,34,56,.22); display: grid; place-items: center; cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .round:hover { transform: translateY(-1px); }
+  .round:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(26,34,56,.22); }
+  .round:focus-visible, .dial:focus-visible, .step:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .round svg { width: 28px; height: 28px; }
+  .series { font-family: var(--label); font-weight: 600; font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .panel {
+    position: absolute; right: clamp(22px, 6vw, 96px); top: 50%; transform: translateY(-50%);
+    width: min(460px, 40vw); display: flex; flex-direction: column; gap: 14px; text-align: center; align-items: center;
+  }
+  .panel .order { font-family: var(--label); font-size: 12.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .panel h1 {
+    margin: 0; font-family: var(--display); font-weight: 600; line-height: 1.02;
+    font-size: clamp(38px, 5.4vw, 82px); letter-spacing: .04em; text-transform: uppercase; text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+  .panel h2 { margin: 0; font-family: var(--label); font-weight: 600; font-size: clamp(16px, 1.7vw, 24px); letter-spacing: .2em; text-transform: uppercase; }
+  .panel .stats { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat b { font-family: var(--display); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat span { font-family: var(--label); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft); }
+  .panel p { margin: 4px 0 0; font-size: 16px; line-height: 1.55; max-width: 40ch; color: var(--ink); }
+  .swap { transition: opacity .35s ease, transform .35s ease; }
+  .swap.out { opacity: 0; transform: translateY(8px); }
+
+  .controls { position: absolute; right: 22px; bottom: max(18px, env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 14px; }
+  .step { width: 44px; height: 44px; }
+  .step svg { width: 20px; height: 20px; }
+  .dial { width: 124px; height: 124px; touch-action: none; cursor: grab; border-radius: 50%; }
+  .dial svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .dial .knob { transform-origin: 70px 70px; }
+  .hint { position: absolute; left: 22px; bottom: max(18px, env(safe-area-inset-bottom, 0px)); font-family: var(--label); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--paper); text-shadow: 0 1px 2px rgba(26,34,56,.45); max-width: 46vw; }
+
+  .fallback { position: fixed; inset: 0; display: grid; place-items: center; padding-inline: 24px; text-align: center; font-size: 16px; }
+
+  @media (max-width: 760px), (max-aspect-ratio: 1/1) {
+    .panel { top: calc(max(18px, env(safe-area-inset-top, 0px)) + 66px); right: 16px; left: 16px; width: auto; transform: none; gap: 8px; }
+    .panel h1 { font-size: clamp(30px, 9vw, 56px); }
+    .panel p { font-size: 14.5px; }
+    .panel .stats { gap: 16px; margin-top: 0; }
+    .stat b { font-size: 18px; }
+    .topbar { left: 16px; right: 16px; }
+    .controls { right: 16px; gap: 10px; }
+    .dial { width: 100px; height: 100px; }
+    .hint { left: 16px; max-width: 34vw; font-size: 11px; }
+  }
+  @media (max-height: 560px) and (min-aspect-ratio: 1/1) {
+    .panel p { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-label="A small 3D planet with the peaks of the Bow Valley standing on it"></canvas>
+
+<div class="chrome">
+  <div class="topbar">
+    <button class="round" id="sound" aria-pressed="false" aria-label="Turn on wind sound">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h5l7-6v20l-7-6H5z"/>
+        <path class="on" d="M21 11c2 2.6 2 7.4 0 10M24.5 8c4 4.4 4 11.6 0 16" hidden/>
+        <path class="off" d="M4 4l24 24"/>
+      </svg>
+    </button>
+    <span class="series">Mountains of the Bow Valley</span>
+  </div>
+
+  <section class="panel" aria-live="polite">
+    <div class="order swap" id="order">Peak 1 of 5 · eastern edge</div>
+    <h1 class="swap" id="name">Îyâ Mnathka</h1>
+    <h2 class="swap" id="english">Mount Yamnuska</h2>
+    <div class="stats swap" id="stats"></div>
+    <p class="swap" id="fact"></p>
+  </section>
+
+  <div class="hint" id="hint">Drag the planet or turn the dial to travel west</div>
+
+  <div class="controls">
+    <button class="round step" id="prev" aria-label="Previous peak, to the east">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4 6.5 10l6 6"/></svg>
+    </button>
+    <div class="dial" id="dial" tabindex="0" role="slider" aria-label="Choose a peak" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+      <svg viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="66" fill="#f4f8fc" stroke="#33527f" stroke-width="3"/>
+        <g id="ticks"></g>
+        <g class="knob" id="knob">
+          <circle cx="70" cy="70" r="40" fill="#33527f"/>
+          <circle cx="70" cy="70" r="40" fill="none" stroke="#1a2238" stroke-opacity=".25" stroke-width="2" stroke-dasharray="3 5"/>
+          <path d="M70 36 L76 50 L64 50 Z" fill="#f4f8fc"/>
+          <circle cx="70" cy="70" r="7" fill="#9ae0f1"/>
+        </g>
+      </svg>
+    </div>
+    <button class="round step" id="next" aria-label="Next peak, to the west">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4 6 6-6 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+// Ordered east to west, the way you meet them driving up the valley from Calgary.
+// `native` holds the Indigenous place name used in the original Storyline piece; peaks without one show the English name.
+const PEAKS = [
+  { native: 'Îyâ Mnathka', english: 'Mount Yamnuska', elev: 2240, where: 'eastern edge',
+    fact: 'The first peak of the Rockies front ranges as you come in from the prairie. Its sheer limestone south face is one of the best-known climbing walls in the Canadian Rockies.',
+    shape: [[-1,0],[-0.82,0.22],[-0.58,0.5],[-0.32,0.74],[-0.05,0.86],[0.22,0.94],[0.42,1],[0.5,0.96],[0.53,0.62],[0.6,0.4],[0.8,0.16],[1,0]], prop: 'camp' },
+  { native: null, english: 'Three Sisters', elev: 2936, where: 'above Canmore',
+    fact: 'A trio of peaks over Canmore. They were first called the Three Nuns in 1883, after a snowfall left them looking like three veiled figures.',
+    shape: [[-1,0],[-0.76,0.34],[-0.56,0.72],[-0.47,0.64],[-0.38,0.58],[-0.2,0.84],[-0.1,0.78],[0.02,0.64],[0.24,0.92],[0.34,1],[0.46,0.8],[0.7,0.4],[1,0]], prop: 'rocks' },
+  { native: null, english: 'Mount Rundle', elev: 2948, where: 'between Canmore and Banff',
+    fact: 'A long tilted slab of limestone that runs for about 12 km between Canmore and Banff. It is named after Robert Rundle, a Methodist missionary who visited the area in the 1840s.',
+    shape: [[-1,0],[-0.62,0.22],[-0.22,0.52],[0.16,0.8],[0.42,1],[0.5,0.9],[0.58,0.94],[0.66,0.6],[0.8,0.3],[1,0]], prop: 'trees' },
+  { native: null, english: 'Cascade Mountain', elev: 2998, where: 'over the Banff townsite',
+    fact: 'The tallest peak near Banff, rising straight north of the town. It is named for the waterfall that spills down its face.',
+    shape: [[-1,0],[-0.62,0.28],[-0.36,0.5],[-0.16,0.8],[0,1],[0.12,0.86],[0.3,0.6],[0.5,0.42],[0.76,0.2],[1,0]], prop: 'falls' },
+  { native: 'Miistukskoowa', english: 'Castle Mountain', elev: 2766, where: 'toward Lake Louise',
+    fact: 'Its stacked cliffs look like castle walls. It was renamed Mount Eisenhower in 1946, and the original name was restored in 1979.',
+    shape: [[-1,0],[-0.86,0.3],[-0.76,0.55],[-0.6,0.6],[-0.55,0.82],[-0.3,0.85],[-0.25,0.7],[-0.15,0.72],[-0.1,0.95],[0.15,0.98],[0.2,0.75],[0.3,0.78],[0.35,1],[0.55,0.96],[0.62,0.6],[0.8,0.35],[1,0]], prop: 'elk' },
+];
+
+const N = PEAKS.length, STEP = Math.PI * 2 / N, R = 10;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas = document.getElementById('scene');
+
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+} catch (e) {
+  document.body.insertAdjacentHTML('beforeend', '<div class="fallback">This globe needs WebGL, which is turned off or unavailable in this browser.</div>');
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x8badd6, 26, 46);
+const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 200);
+
+scene.add(new THREE.HemisphereLight(0xdcecff, 0x2d4a74, 1.5));
+const sun = new THREE.DirectionalLight(0xfff3e0, 2.4);
+sun.position.set(-8, 22, 14);
+scene.add(sun);
+
+// ---------- Glow halo behind the active peak (the cyan disc from the Storyline screens)
+function radialTexture(stops) {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d'), grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+  stops.forEach(([o, col]) => grd.addColorStop(o, col));
+  g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: radialTexture([[0, 'rgba(160,232,246,1)'], [0.82, 'rgba(150,224,241,.95)'], [0.9, 'rgba(150,224,241,.45)'], [1, 'rgba(150,224,241,0)']]),
+  depthWrite: false, fog: false,
+}));
+halo.scale.set(17, 14, 1);
+halo.position.set(0, R + 1.8, -6);
+halo.renderOrder = -1;
+scene.add(halo);
+
+// ---------- Planet
+const planet = new THREE.Group();
+scene.add(planet);
+planet.add(new THREE.Mesh(
+  new THREE.SphereGeometry(R, 128, 96),
+  new THREE.MeshStandardMaterial({ color: 0x34568a, roughness: 0.92 })
+));
+
+// Rock shader: strata bands, vertical streaks, snow on ledges and the summit.
+function rockMaterial(h, rock, shade) {
+  const m = new THREE.MeshStandardMaterial({ roughness: 0.85, flatShading: false });
+  m.onBeforeCompile = (s) => {
+    Object.assign(s.uniforms, {
+      uH: { value: h }, uRock: { value: new THREE.Color(rock) }, uShade: { value: new THREE.Color(shade) }, uSnow: { value: new THREE.Color(0xf2f6fb) },
+    });
+    s.vertexShader = s.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vLocal;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvLocal = position;');
+    s.fragmentShader = s.fragmentShader
+      .replace('#include <common>', `#include <common>
+        varying vec3 vLocal; uniform float uH; uniform vec3 uRock, uShade, uSnow;
+        float hh(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float nz(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
+          return mix(mix(hh(i), hh(i+vec2(1,0)), f.x), mix(hh(i+vec2(0,1)), hh(i+vec2(1,1)), f.x), f.y); }`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        float t = clamp(vLocal.y / uH, 0., 1.);
+        float n = nz(vLocal.xy * vec2(2.2, 5.0) + vLocal.z);
+        float streak = nz(vec2(vLocal.x * 7.0 + vLocal.z * 3.0, vLocal.y * 0.9));
+        vec3 col = mix(uShade, uRock, smoothstep(0.3, 0.72, streak * 0.75 + t * 0.4));
+        float f = fract(t * 4.5 + n * 0.3);
+        float ledge = smoothstep(0.86, 0.9, f) * (1. - smoothstep(0.93, 0.97, f));
+        col = mix(col, uShade * 0.75, smoothstep(0.55, 0.6, f) * (1. - smoothstep(0.62, 0.68, f)) * 0.7);
+        float snow = max(ledge * step(0.45, n), smoothstep(0.9, 0.95, t + n * 0.1));
+        snow = max(snow, (1. - smoothstep(0.12, 0.2, t + n * 0.08)) * step(0.55, nz(vLocal.xy * vec2(3.0, 9.0) + 3.)));
+        diffuseColor.rgb = mix(col, uSnow, snow);`);
+  };
+  return m;
+}
+
+function extrudeProfile(points, w, h, depth) {
+  const shape = new THREE.Shape();
+  points.forEach(([x, y], i) => (i ? shape.lineTo : shape.moveTo).call(shape, x * w / 2, y * h));
+  shape.lineTo(w / 2, -0.6); shape.lineTo(-w / 2, -0.6);
+  const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: 0.35, bevelSize: 0.22, bevelSegments: 3, curveSegments: 4 });
+  g.translate(0, 0, -depth / 2);
+  return g;
+}
+
+function surfaceY(x, z) { return -(x * x + z * z) / (2 * R); }
+
+// Trees: three stacked cones, instanced across the planet.
+const treeGeo = mergeGeometries([
+  new THREE.ConeGeometry(0.46, 0.95, 7).translate(0, 0.55, 0),
+  new THREE.ConeGeometry(0.36, 0.8, 7).translate(0, 0.98, 0),
+  new THREE.ConeGeometry(0.24, 0.62, 7).translate(0, 1.36, 0),
+]);
+const treeMat = new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true });
+const greens = [0x7aa357, 0x5f8a45, 0x8fb565, 0x4d7639].map(c => new THREE.Color(c));
+
+const mountains = [];
+PEAKS.forEach((p, i) => {
+  const theta = i * STEP, h = 2.8 + (p.elev - 2200) / 800 * 1.6, w = 5.6;
+  const g = new THREE.Group();
+  g.position.set(Math.sin(theta) * R, Math.cos(theta) * R, 0);
+  g.rotation.z = -theta;
+  const back = new THREE.Mesh(extrudeProfile(p.shape.map(([x, y]) => [x * 0.9, y]), w * 1.1, h * 0.78, 0.8), rockMaterial(h * 0.78, 0x8d9fbf, 0x4d6290));
+  back.position.set(0.7, -0.15, -1.2);
+  const front = new THREE.Mesh(extrudeProfile(p.shape, w, h, 1.2), rockMaterial(h, 0xd6c7a8, 0x6577a3));
+  front.position.y = -0.15;
+  g.add(back, front);
+  addProp(g, p.prop, h);
+  planet.add(g);
+  mountains.push(g);
+});
+
+function addProp(g, kind, h) {
+  if (kind === 'camp') {
+    const tent = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.7, 4), new THREE.MeshStandardMaterial({ color: 0x8b9a55, flatShading: true }));
+    tent.position.set(-1.7, surfaceY(-1.7, 2.1) + 0.3, 2.1); tent.rotation.y = 0.5; g.add(tent);
+    const fire = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.36, 6), new THREE.MeshBasicMaterial({ color: 0xffa43a }));
+    fire.position.set(-2.4, surfaceY(-2.4, 2.5) + 0.16, 2.5); g.add(fire);
+    const light = new THREE.PointLight(0xff8a3a, 3, 4.5); light.position.copy(fire.position).y += 0.4; g.add(light);
+    g.userData.fire = { fire, light };
+  } else if (kind === 'rocks' || kind === 'elk') {
+    const mat = new THREE.MeshStandardMaterial({ color: 0x8c93a0, flatShading: true });
+    [[-1.9, 1.7, 0.32], [-1.5, 2.0, 0.22], [1.8, 1.9, 0.26]].forEach(([x, z, s]) => {
+      const r = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), mat); r.position.set(x, surfaceY(x, z) + s * 0.5, z); g.add(r);
+    });
+    if (kind === 'elk') g.add(makeElk());
+  } else if (kind === 'falls') {
+    const falls = new THREE.Mesh(new THREE.PlaneGeometry(0.18, h * 0.55), new THREE.MeshBasicMaterial({ color: 0xe8f6ff, transparent: true, opacity: 0.85 }));
+    falls.position.set(-0.35, h * 0.33, 0.97); g.add(falls);
+  }
+}
+
+function makeElk() {
+  const elk = new THREE.Group(), coat = new THREE.MeshStandardMaterial({ color: 0x8a5a35, flatShading: true });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x4a2f1d, flatShading: true });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.32, 0.26), coat); body.position.y = 0.5; elk.add(body);
+  const neck = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.36, 0.16), dark); neck.position.set(-0.36, 0.72, 0); neck.rotation.z = 0.5; elk.add(neck);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.12), coat); head.position.set(-0.5, 0.88, 0); elk.add(head);
+  [[0.25, 0.08], [0.25, -0.08], [-0.25, 0.08], [-0.25, -0.08]].forEach(([x, z]) => {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.38, 0.06), dark); leg.position.set(x, 0.19, z); elk.add(leg);
+  });
+  const antler = new THREE.MeshStandardMaterial({ color: 0xe8dcc3 });
+  [-0.06, 0.06].forEach(z => {
+    const a = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.02, 0.36), antler); a.position.set(-0.44, 1.05, z); a.rotation.set(z * 4, 0, 0.35); elk.add(a);
+  });
+  elk.position.set(-0.4, surfaceY(-0.4, 2.0), 2.0); elk.rotation.y = -0.4;
+  return elk;
+}
+
+// Scatter trees, keeping clear of each mountain's footprint so the rock stays visible.
+{
+  const COUNT = 2600, mesh = new THREE.InstancedMesh(treeGeo, treeMat, COUNT);
+  const up = new THREE.Vector3(0, 1, 0), n = new THREE.Vector3(), q = new THREE.Quaternion(), spin = new THREE.Quaternion();
+  const m = new THREE.Matrix4(), s = new THREE.Vector3(), pos = new THREE.Vector3();
+  let placed = 0, guard = 0;
+  while (placed < COUNT && guard++ < 40000) {
+    // Bias toward the band the peaks stand on, where the camera looks.
+    const lat = (Math.random() < 0.7 ? (Math.random() - 0.5) * 0.9 : Math.asin(Math.random() * 2 - 1));
+    const lon = Math.random() * Math.PI * 2;
+    n.set(Math.sin(lon) * Math.cos(lat), Math.cos(lon) * Math.cos(lat), Math.sin(lat));
+    const along = Math.atan2(n.x, n.y);
+    let blocked = false;
+    for (let i = 0; i < N; i++) {
+      let d = Math.abs(along - i * STEP); d = Math.min(d, Math.PI * 2 - d);
+      if (d * R < 3.0 && lat * R > -1.8 && lat * R < 1.0) blocked = true;
+      if (d * R < 1.6 && lat * R >= 1.0 && lat * R < 2.6) blocked = true;
+      if (Math.abs(lat * R - 2.1) < 0.7 && d * R < 2.9 && PEAKS[i].prop !== 'trees') blocked = true;
+    }
+    if (blocked) continue;
+    q.setFromUnitVectors(up, n); spin.setFromAxisAngle(up, Math.random() * 6.28); q.multiply(spin);
+    const k = 0.32 + Math.random() * 0.36;
+    s.set(k, k * (0.9 + Math.random() * 0.5), k);
+    pos.copy(n).multiplyScalar(R - 0.05);
+    m.compose(pos, q, s);
+    mesh.setMatrixAt(placed, m);
+    mesh.setColorAt(placed, greens[(Math.random() * greens.length) | 0]);
+    placed++;
+  }
+  mesh.count = placed;
+  planet.add(mesh);
+}
+
+// ---------- Clouds (drifting on their own ring) and an eagle
+const cloudRing = new THREE.Group();
+scene.add(cloudRing);
+const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xc9dcf2, emissiveIntensity: 0.35, flatShading: true, roughness: 1 });
+for (let i = 0; i < 14; i++) {
+  const c = new THREE.Group();
+  for (let j = 0; j < 3; j++) {
+    const puff = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28 + Math.random() * 0.22, 0), cloudMat);
+    puff.position.set(j * 0.38 - 0.38, Math.random() * 0.12, Math.random() * 0.2); puff.scale.y = 0.6; c.add(puff);
+  }
+  const a = (i / 14) * Math.PI * 2 + Math.random() * 0.3, r = R + 4 + Math.random() * 3.2;
+  c.position.set(Math.sin(a) * r, Math.cos(a) * r, -2 - Math.random() * 5);
+  c.rotation.z = -a;
+  cloudRing.add(c);
+}
+
+const eagle = new THREE.Group();
+{
+  const mat = new THREE.MeshStandardMaterial({ color: 0x4a2f1d, side: THREE.DoubleSide, flatShading: true });
+  const wingGeo = new THREE.BufferGeometry();
+  wingGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, -0.14, 0, 0, 0.16, 0.85, 0.05, 0.02], 3));
+  wingGeo.computeVertexNormals();
+  const L = new THREE.Mesh(wingGeo, mat), Rw = new THREE.Mesh(wingGeo, mat);
+  Rw.scale.x = -1;
+  const body = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.5, 5), mat); body.rotation.x = Math.PI / 2;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), new THREE.MeshStandardMaterial({ color: 0xf3efe6 })); head.position.z = 0.28;
+  eagle.add(L, Rw, body, head);
+  eagle.userData.wings = [L, Rw];
+  scene.add(eagle);
+}
+
+// ---------- Wind (synthesised, starts only from the sound button)
+let audio = null;
+const soundBtn = document.getElementById('sound');
+soundBtn.addEventListener('click', () => {
+  if (!audio) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate), d = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < d.length; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.5; }
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 520;
+    const gain = ctx.createGain(); gain.gain.value = 0;
+    const lfo = ctx.createOscillator(), lfoGain = ctx.createGain(); lfo.frequency.value = 0.13; lfoGain.gain.value = 260;
+    lfo.connect(lfoGain).connect(filter.frequency);
+    src.connect(filter).connect(gain).connect(ctx.destination);
+    src.start(); lfo.start();
+    audio = { ctx, gain, on: false };
+  }
+  audio.on = !audio.on;
+  audio.ctx.resume();
+  audio.gain.gain.setTargetAtTime(audio.on ? 0.55 : 0, audio.ctx.currentTime, 0.4);
+  soundBtn.setAttribute('aria-pressed', audio.on);
+  soundBtn.setAttribute('aria-label', audio.on ? 'Turn off wind sound' : 'Turn on wind sound');
+  soundBtn.querySelector('.on').hidden = !audio.on;
+  soundBtn.querySelector('.off').hidden = audio.on;
+});
+
+// ---------- Rotation state, dial and panel
+let phi = 0, target = 0, active = -1;
+const mod = (a, n) => ((a % n) + n) % n;
+const dial = document.getElementById('dial'), knob = document.getElementById('knob'), ticks = document.getElementById('ticks');
+PEAKS.forEach((p, i) => {
+  const a = i * STEP, x = 70 + Math.sin(a) * 54, y = 70 - Math.cos(a) * 54;
+  ticks.insertAdjacentHTML('beforeend', `<circle data-i="${i}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#33527f" fill-opacity=".35"><title>${p.english}</title></circle>`);
+});
+
+const el = id => document.getElementById(id);
+const swaps = [...document.querySelectorAll('.swap')];
+function showPeak(i) {
+  if (i === active) return;
+  const first = active === -1;
+  active = i;
+  const p = PEAKS[i];
+  const fill = () => {
+    el('order').textContent = `Peak ${i + 1} of ${N} · ${p.where}`;
+    el('name').textContent = p.native || p.english;
+    el('english').textContent = p.native ? p.english : 'Bow Valley, Alberta';
+    el('stats').innerHTML = `<div class="stat"><b>${p.elev.toLocaleString('en-CA')} m</b><span>Summit</span></div>
+      <div class="stat"><b>${Math.round(p.elev * 3.28084).toLocaleString('en-CA')} ft</b><span>Summit</span></div>`;
+    el('fact').textContent = p.fact;
+    swaps.forEach(s => s.classList.remove('out'));
+  };
+  if (first || reduceMotion) fill();
+  else { swaps.forEach(s => s.classList.add('out')); setTimeout(fill, 260); }
+  dial.setAttribute('aria-valuenow', i + 1);
+  dial.setAttribute('aria-valuetext', `${p.english}, peak ${i + 1} of ${N}`);
+  ticks.querySelectorAll('circle').forEach(c => {
+    const on = +c.dataset.i === i;
+    c.setAttribute('fill', on ? '#e9773b' : '#33527f'); c.setAttribute('fill-opacity', on ? '1' : '.35'); c.setAttribute('r', on ? 7 : 5);
+  });
+}
+const snap = () => { target = Math.round(target / STEP) * STEP; };
+const go = d => { target = Math.round(target / STEP) * STEP + d * STEP; };
+el('next').addEventListener('click', () => go(1));
+el('prev').addEventListener('click', () => go(-1));
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { go(1); e.preventDefault(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { go(-1); e.preventDefault(); }
+  if (e.key === 'Home') target = Math.floor(target / (Math.PI * 2)) * Math.PI * 2;
+});
+
+let hinted = false;
+const dismissHint = () => { if (!hinted) { hinted = true; el('hint').style.opacity = '0'; el('hint').style.transition = 'opacity .6s'; } };
+
+// Drag the planet: horizontal movement turns it like a wheel.
+let drag = null;
+canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX }; canvas.setPointerCapture(e.pointerId); canvas.classList.add('dragging'); dismissHint(); });
+canvas.addEventListener('pointermove', e => {
+  pointer.x = e.clientX / innerWidth * 2 - 1; pointer.y = e.clientY / innerHeight * 2 - 1;
+  if (!drag) return;
+  target -= (e.clientX - drag.x) * 0.0065; drag.x = e.clientX;
+});
+const endDrag = () => { if (drag) { drag = null; canvas.classList.remove('dragging'); snap(); } };
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+// Turn the dial: one full turn of the knob is one full turn of the planet.
+let dialDrag = null;
+const dialAngle = e => { const r = dial.getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))); };
+dial.addEventListener('pointerdown', e => { dialDrag = dialAngle(e); dial.setPointerCapture(e.pointerId); dismissHint(); });
+dial.addEventListener('pointermove', e => {
+  if (dialDrag === null) return;
+  const a = dialAngle(e); let d = a - dialDrag;
+  if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2;
+  target += d; dialDrag = a;
+});
+const endDial = () => { if (dialDrag !== null) { dialDrag = null; snap(); } };
+dial.addEventListener('pointerup', endDial);
+dial.addEventListener('pointercancel', endDial);
+
+// ---------- Layout: shift the planet left on wide screens, down on tall ones
+const pointer = { x: 0, y: 0 }, cam = { x: 0, y: 0 };
+let portrait = false;
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  portrait = w < 760 || w / h < 1;
+  if (portrait) {
+    camera.fov = 40;
+    camera.setViewOffset(w, h, 0, -h * 0.22, w, h);
+  } else {
+    camera.fov = 34;
+    camera.setViewOffset(w, h, w * 0.2, 0, w, h);
+  }
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+resize();
+
+// ---------- Loop
+const clock = new THREE.Clock();
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  phi += (target - phi) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 6));
+  planet.rotation.z = phi;
+  knob.style.transform = `rotate(${phi}rad)`;
+  showPeak(mod(Math.round(phi / STEP), N));
+
+  const sway = reduceMotion ? 0 : 1;
+  cam.x += (pointer.x * 1.6 * sway - cam.x) * 0.04;
+  cam.y += (pointer.y * 0.8 * sway - cam.y) * 0.04;
+  const dist = portrait ? 30 : 23;
+  camera.position.set(cam.x, R + 6.5 - cam.y, dist);
+  camera.lookAt(0, R + 1.2, 0);
+
+  if (!reduceMotion) {
+    cloudRing.rotation.z = -t * 0.025;
+    const ea = t * 0.35;
+    eagle.position.set(Math.cos(ea) * 5.5, R + 5 + Math.sin(t * 0.8) * 0.4, Math.sin(ea) * 3.2 + 1);
+    eagle.rotation.y = -ea;
+    eagle.rotation.z = Math.sin(ea) * 0.25;
+    const flap = Math.sin(t * 7) * 0.45;
+    eagle.userData.wings[0].rotation.z = flap; eagle.userData.wings[1].rotation.z = -flap;
+    mountains.forEach(g => { const f = g.userData.fire; if (f) { const k = 0.8 + Math.sin(t * 13) * 0.12 + Math.sin(t * 29) * 0.08; f.light.intensity = 3 * k; f.fire.scale.y = k * 1.2; } });
+  } else {
+    eagle.position.set(3.5, R + 3.4, 2);
+  }
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>
