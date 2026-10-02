@@ -32,6 +32,7 @@ from pysheds.grid import Grid
 from pysheds.sview import Raster, ViewFinder
 from scipy import ndimage
 from scipy.ndimage import map_coordinates
+from skimage.draw import line as draw_line
 from skimage.graph import route_through_array
 
 CDEM = "/vsicurl/https://datacube-prod-data-public.s3.ca-central-1.amazonaws.com/store/elevation/cdem-cdsm/cdem/cdem-canada-dem.tif"
@@ -67,14 +68,14 @@ def load_dem():
 
 
 def trace_water(dem, x0, y0):
-    """Return (water mask, Bow River path as (row, col) cells), both on the 20 m UTM grid."""
-    vf = ViewFinder(affine=from_origin(x0, y0, RES, RES), shape=dem.shape, crs=pyproj.Proj("EPSG:32611"), nodata=np.nan)
-    grid = Grid(viewfinder=vf)
-    filled = grid.resolve_flats(grid.fill_depressions(grid.fill_pits(Raster(dem.astype(np.float64), viewfinder=vf))))
-    acc = np.asarray(grid.accumulation(grid.flowdir(filled)))
-    streams = ndimage.binary_dilation(acc * RES * RES > 15e6, iterations=1)
+    """Return (water mask, Bow River path as (row, col) cells), both on the 20 m UTM grid.
 
-    gy, gx = np.gradient(dem.astype(np.float64))
+    The Bow is traced first, as the lowest-cost path along the valley floor. It is then burned into the
+    terrain and flat ground is tilted very slightly toward it, so the drainage network has no undecided
+    flats and every stream runs on until it meets the Bow.
+    """
+    dem = dem.astype(np.float64)
+    gy, gx = np.gradient(dem)
     lab, n = ndimage.label((np.abs(gx) < 1e-3) & (np.abs(gy) < 1e-3))
     keep = []
     for k, sl in enumerate(ndimage.find_objects(lab), start=1):
@@ -94,10 +95,63 @@ def trace_water(dem, x0, y0):
     cost = np.exp((dem - 1250) / 35.0)
     cost[lakes] *= 0.5
     path = np.array(route_through_array(cost, start, end, fully_connected=True, geometric=True)[0])
-    bow = np.zeros_like(lakes)
-    bow[path[:, 0], path[:, 1]] = True
-    bow = ndimage.binary_dilation(bow, iterations=3)   # about 140 m wide, to match the ribbon on the globe
-    return lakes | streams | bow, path
+    # Across flat valley floors the cheapest path runs in straight lines; smooth it into a river's curves.
+    smooth_path = np.c_[ndimage.gaussian_filter1d(path[:, 0].astype(float), 10, mode="nearest"),
+                        ndimage.gaussian_filter1d(path[:, 1].astype(float), 10, mode="nearest")]
+    path = np.unique(np.round(smooth_path).astype(int), axis=0, return_index=True)
+    path = np.round(smooth_path).astype(int)[np.sort(path[1])]
+    on_bow = np.zeros(dem.shape, bool)
+    for (r0, c0), (r1, c1) in zip(path[:-1], path[1:]):
+        rr, cc = draw_line(r0, c0, r1, c1)
+        on_bow[rr, cc] = True
+
+    # Burn the Bow in, always running downhill, and tilt everything else a hair toward it.
+    burned = dem + ndimage.distance_transform_edt(~on_bow) * 0.002
+    level = np.minimum.accumulate(dem[path[:, 0], path[:, 1]]) - 5 - np.arange(len(path)) * 1e-3
+    burned[path[:, 0], path[:, 1]] = level
+
+    vf = ViewFinder(affine=from_origin(x0, y0, RES, RES), shape=dem.shape, crs=pyproj.Proj("EPSG:32611"), nodata=np.nan)
+    grid = Grid(viewfinder=vf)
+    filled = grid.resolve_flats(grid.fill_depressions(grid.fill_pits(Raster(burned, viewfinder=vf))))
+    fdir = grid.flowdir(filled)
+    acc = np.asarray(grid.accumulation(fdir))
+    undecided = int((np.asarray(fdir) < 1).sum())
+    streams = ndimage.binary_dilation(acc * RES * RES > 15e6, iterations=1)
+
+    bow = ndimage.binary_dilation(on_bow, iterations=3)   # about 140 m wide, to match the ribbon on the globe
+    water = lakes | streams | bow
+
+    # Anything that still stops short (a stream ending in a leftover flat, a pond beside the river) is joined
+    # to the nearest larger water along the lowest ground. Ponds more than 1.5 km from other water stay put.
+    lab, n = ndimage.label(water, structure=np.ones((3, 3)))
+    sizes = ndimage.sum(np.ones_like(lab), lab, index=np.arange(1, n + 1))
+    main = lab == (np.argmax(sizes) + 1)
+    joined = 0
+    for k, sl in enumerate(ndimage.find_objects(lab), start=1):
+        part = lab[sl] == k
+        if main[sl][part].any():
+            continue
+        cells = np.argwhere(lab == k)
+        low = cells[np.argmin(dem[cells[:, 0], cells[:, 1]])]          # its outlet end
+        is_stream = streams[cells[:, 0], cells[:, 1]].mean() > 0.5
+        win = 120                                                      # search within 2.4 km
+        r0, c0 = max(0, low[0] - win), max(0, low[1] - win)
+        sub_main = main[r0:low[0] + win, c0:low[1] + win]
+        if not sub_main.any():
+            continue
+        d, (ir, ic) = ndimage.distance_transform_edt(~sub_main, return_indices=True)
+        lr, lc = low[0] - r0, low[1] - c0
+        if not is_stream and d[lr, lc] * RES > 1500:
+            continue
+        target = (ir[lr, lc], ic[lr, lc])
+        sub_cost = 1 + np.maximum(0, dem[r0:low[0] + win, c0:low[1] + win] - dem[low[0], low[1]])
+        link = np.array(route_through_array(sub_cost, (lr, lc), target, fully_connected=True, geometric=True)[0])
+        mask = np.zeros_like(sub_main)
+        mask[link[:, 0], link[:, 1]] = True
+        water[r0:low[0] + win, c0:low[1] + win] |= ndimage.binary_dilation(mask, iterations=1)
+        joined += 1
+    print(f"drainage: {undecided} cells without a flow direction; joined {joined} loose streams and ponds")
+    return water, path
 
 
 def main():
@@ -120,7 +174,9 @@ def main():
         ex, ny = cx + U * right[0] + V * toward[0], cy + U * right[1] + V * toward[1]
         rows, cols = (y0 - ny) / RES, (ex - x0) / RES
         h = map_coordinates(dem, [rows, cols], order=1)
-        wet = map_coordinates(water.astype(np.uint8), [rows, cols], order=0).astype(bool)
+        # A tile cell is ~40 m across, two DEM cells: count it wet if any water touches its footprint,
+        # so narrow streams stay continuous instead of breaking into dashes.
+        wet = map_coordinates(ndimage.maximum_filter(water.astype(np.uint8), size=3), [rows, cols], order=0).astype(bool)
         # Where the Bow enters and leaves the tile, in tile units (-0.5..0.5), at 0.9 of the tile radius.
         rel = bow_xy - [cx, cy]
         uv = np.c_[rel @ right, rel @ toward] / L
