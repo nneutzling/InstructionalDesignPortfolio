@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#eef5f9}
+  ::selection{background:#ffb05a;color:#1b2542}
+  @keyframes menuline{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes scrimin{from{opacity:0}to{opacity:1}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="font-family:'Plus Jakarta Sans',sans-serif;background:#eef5f9;color:#1b2542;overflow-x:hidden;position:relative;">
+
+  <!-- ===== FIXED CHROME ===== -->
+  <button data-wordmark="" onClick="{{ scrollTop }}" aria-label="Back to top" style="position:fixed;top:24px;left:26px;z-index:70;background:none;border:none;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:25px;letter-spacing:-0.03em;color:#ffffff;line-height:1;padding:0;display:flex;align-items:center;gap:9px;transition:color .35s ease;">
+    <span style="display:inline-flex;width:22px;height:22px;border-radius:7px;background:#f1907f;align-items:center;justify-content:center;"><span style="display:inline-block;width:8px;height:8px;background:#1b2542;border-radius:2px;transform:rotate(45deg);"></span></span>Nicole Neutzling
+  </button>
+
+  <button onClick="{{ toggleMenu }}" aria-label="Open menu" style="position:fixed;top:20px;right:24px;z-index:70;width:50px;height:50px;border-radius:50%;background:#ffffff;border:1.5px solid rgba(27,37,66,.12);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;box-shadow:0 8px 22px rgba(27,37,66,.14);">
+    <span style="display:block;width:18px;height:2px;border-radius:2px;background:#1b2542;"></span>
+    <span style="display:block;width:18px;height:2px;border-radius:2px;background:#1b2542;"></span>
+    <span style="display:block;width:12px;height:2px;border-radius:2px;background:#f1907f;"></span>
+  </button>
+
+  <!-- ===== MENU OVERLAY ===== -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:90;background:#141d35;display:flex;flex-direction:column;justify-content:center;padding:0 9vw;overflow:hidden;animation:scrimin .25s ease both;">
+      <div style="position:absolute;top:-20%;right:-10%;width:60vw;height:60vw;border-radius:50%;background:radial-gradient(circle,rgba(241,144,127,.4) 0%,rgba(255,176,90,.14) 38%,transparent 66%);pointer-events:none;"></div>
+      <button onClick="{{ closeMenu }}" aria-label="Close menu" style="position:absolute;top:20px;right:24px;width:50px;height:50px;border-radius:50%;background:#ffffff;border:none;cursor:pointer;font-size:26px;line-height:1;color:#1b2542;">×</button>
+      <div style="position:relative;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:#ffb05a;margin-bottom:30px;font-weight:700;">Navigate</div>
+      <nav style="position:relative;display:flex;flex-direction:column;gap:4px;">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+          <a href="{{ n.href }}" onClick="{{ n.onClick }}" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(32px,5.4vw,58px);line-height:1.12;color:#eef5f9;text-decoration:none;letter-spacing:-0.02em;width:fit-content;animation:menuline .5s ease both;" style-hover="color:#f1907f;">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+      <div style="position:relative;margin-top:46px;font-size:15px;color:#8fa0c0;">Currently open to instructional-design roles.</div>
+    </div>
+  </sc-if>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero" data-hero="" style="position:relative;width:100vw;height:100svh;min-height:620px;overflow:hidden;background:linear-gradient(180deg,#0d1730 0%,#15325a 36%,#2a608c 66%,#7cb4d6 90%,#cfe3ef 100%);display:flex;align-items:center;">
+
+    <div style="position:relative;z-index:5;padding:0 clamp(24px,7vw,90px);max-width:940px;">
+      <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);padding:7px 15px;border-radius:100px;margin-bottom:28px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#9ed94d;box-shadow:0 0 0 3px rgba(158,217,77,.22);"></span>
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:0.03em;color:#dbe4f2;">Instructional Designer &amp; eLearning Developer</span>
+      </div>
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#ffffff;font-size:clamp(37px,5.7vw,72px);line-height:1.01;letter-spacing:-0.038em;text-wrap:balance;">Human-Centred Learning Design, Powered by Technology</h1>
+      <p style="margin:26px 0 0;font-size:clamp(17px,2.1vw,21px);line-height:1.55;color:#aeb9d4;max-width:560px;font-weight:500;">I create eLearning and training experiences that make complex information easier to understand, apply, and remember , using instructional design, storytelling, and emerging AI tools.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;">
+        <a href="#work" onClick="{{ goWork }}" style="display:inline-flex;align-items:center;gap:9px;background:#f1907f;color:#1b2542;font-weight:700;font-size:16px;text-decoration:none;padding:15px 30px;border-radius:100px;box-shadow:0 10px 26px rgba(241,144,127,.32);">View my work →</a>
+      </div>
+      
+    </div>
+
+    <div style="position:absolute;bottom:26px;left:clamp(24px,7vw,90px);z-index:5;display:flex;align-items:center;gap:12px;color:rgba(13,23,48,.62);">
+      <span style="font-size:11px;letter-spacing:0.22em;text-transform:uppercase;font-weight:600;">Scroll</span>
+      <span style="width:34px;height:1px;background:rgba(13,23,48,.4);"></span>
+    </div>
+  </section>
+
+  <!-- ===== SELECTED WORK ===== -->
+  <section id="work" style="padding:104px clamp(20px,5vw,40px) 90px;background:#cfe3ef;">
+    <div style="max-width:1120px;margin:0 auto;">
+      <div data-reveal="" style="text-align:center;max-width:680px;margin:0 auto 60px;">
+        <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:16px;">Selected work</div>
+        <h2 style="margin:0 0 16px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#1b2542;font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-0.035em;">Case studies</h2>
+        <p style="margin:0;font-size:17px;line-height:1.55;color:#5b6a86;">A connected path through four recent projects. Follow the thread, then open any case study for the full story — overview, challenge, my role, approach, and what it demonstrates.</p>
+      </div>
+
+      <div data-route="" style="position:relative;max-width:880px;margin:0 auto;">
+        <div style="position:absolute;left:29px;top:34px;bottom:60px;width:0;border-left:2px dashed #b6d2e2;"></div>
+        <div data-progress="" style="position:absolute;left:28px;top:34px;width:3px;height:0;border-radius:3px;background:linear-gradient(180deg,#ffb05a,#f1907f);transition:height .15s linear;"></div>
+
+        <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+          <div data-reveal="" style="position:relative;padding-left:74px;padding-bottom:30px;">
+            <div style="position:absolute;left:13px;top:28px;width:34px;height:34px;border-radius:50%;background:{{ p.accent }};border:4px solid #cfe3ef;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 4px 12px rgba(27,37,66,.18);font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#fff;">{{ p.num }}</div>
+
+            <div onClick="{{ p.open }}" role="button" tabindex="0" style="cursor:pointer;background:#ffffff;border:1px solid rgba(27,37,66,.08);border-radius:22px;overflow:hidden;box-shadow:0 16px 40px -22px rgba(27,37,66,.28);transition:transform .2s ease,box-shadow .2s ease;" style-hover="transform:translateY(-4px);box-shadow:0 26px 52px -22px rgba(27,37,66,.36);">
+              <div style="height:5px;background:{{ p.accent }};"></div>
+              <div style="padding:22px clamp(20px,3vw,28px);">
+                <span style="font-size:11.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#7e8aa6;">{{ p.context }}</span>
+                <h3 style="margin:10px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(21px,2.6vw,26px);line-height:1.12;letter-spacing:-0.02em;color:#1b2542;">{{ p.title }}</h3>
+
+                <div style="display:flex;align-items:center;gap:10px;margin:14px 0 0;padding:12px 14px;background:#f4f9fb;border-radius:13px;">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(241,144,127,.16);color:#d76b58;font-weight:800;font-size:13px;flex:none;">✓</span>
+                  <span style="font-size:15px;font-weight:700;color:#1b2542;line-height:1.3;">{{ p.outcome }}</span>
+                </div>
+
+                <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:16px;">
+                  <sc-for list="{{ p.tools }}" as="t" hint-placeholder-count="4">
+                    <span style="font-size:12px;font-weight:600;color:#46557a;border:1px solid rgba(27,37,66,.12);border-radius:100px;padding:5px 12px;">{{ t }}</span>
+                  </sc-for>
+                </div>
+
+                <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(27,37,66,.08);">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="2">
+                      <span title="{{ c.title }}" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:{{ c.bg }};color:{{ c.fg }};border:1px solid rgba(27,37,66,.1);font-size:12px;font-weight:800;">{{ c.glyph }}</span>
+                    </sc-for>
+                    <span style="font-size:12.5px;color:#7e8aa6;font-weight:600;">{{ p.linkSummary }}</span>
+                  </div>
+                  <span style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#f1907f;">Read case study →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+
+        <div data-reveal="" style="position:relative;padding-left:74px;">
+          <div style="position:absolute;left:18px;top:0;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#ffb05a,#f1907f);z-index:2;box-shadow:0 6px 16px rgba(241,144,127,.4);"></div>
+          <div style="padding:1px 0 0;font-size:15px;font-weight:600;color:#5b6a86;">More projects and full demos available on request.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROCESS ===== -->
+  <section id="process" style="position:relative;background:#141d35;overflow:hidden;">
+    <div style="position:absolute;top:-30%;right:-8%;width:50vw;height:50vw;border-radius:50%;background:radial-gradient(circle,rgba(241,144,127,.16) 0%,rgba(255,176,90,.06) 40%,transparent 66%);pointer-events:none;"></div>
+    <div style="position:relative;max-width:1120px;margin:0 auto;padding:96px clamp(20px,5vw,40px);">
+      <div data-reveal="" style="text-align:center;max-width:640px;margin:0 auto 60px;">
+        <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#ffb05a;font-weight:700;margin-bottom:16px;">How I work</div>
+        <h2 style="margin:0 0 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#ffffff;font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-0.035em;">My process</h2>
+        <p style="margin:0;font-size:17px;line-height:1.55;color:#aeb9d4;">A repeatable path from problem to proof — every project grounded in evidence and measured against outcomes.</p>
+      </div>
+      <div style="position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+          <div data-reveal="" style="position:relative;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:24px 20px;">
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:{{ s.color }};border:1.5px solid {{ s.color }};border-radius:100px;padding:3px 11px;">{{ s.tag }}</span>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;color:#fff;letter-spacing:-0.02em;margin:16px 0 8px;">{{ s.title }}</div>
+            <div style="font-size:14px;color:#9caac9;line-height:1.5;">{{ s.desc }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS & TOOLS ===== -->
+  <section id="skills" style="padding:96px clamp(20px,5vw,40px);">
+    <div style="max-width:1120px;margin:0 auto;">
+      <div data-reveal="" style="text-align:center;max-width:620px;margin:0 auto 56px;">
+        <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:16px;">Capabilities</div>
+        <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#1b2542;font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-0.035em;">Skills &amp; tools</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:22px;">
+        <div data-reveal="" style="background:#ffffff;border:1px solid rgba(27,37,66,.08);border-radius:22px;padding:30px;box-shadow:0 16px 40px -26px rgba(27,37,66,.3);">
+          <h3 style="margin:0 0 20px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;color:#1b2542;display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:3px;background:#f1907f;"></span>Design skills</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <sc-for list="{{ skills }}" as="sk" hint-placeholder-count="9">
+              <span style="background:#eaf3f8;color:#1b2542;font-weight:600;font-size:13.5px;padding:9px 14px;border-radius:100px;border:1px solid rgba(27,37,66,.06);">{{ sk }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div data-reveal="" style="background:#ffffff;border:1px solid rgba(27,37,66,.08);border-radius:22px;padding:30px;box-shadow:0 16px 40px -26px rgba(27,37,66,.3);">
+          <h3 style="margin:0 0 20px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;color:#1b2542;display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:3px;background:#ffb05a;"></span>Tools &amp; platforms</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
+            <sc-for list="{{ tools }}" as="tl" hint-placeholder-count="9">
+              <div style="display:flex;align-items:center;gap:9px;border:1px solid rgba(27,37,66,.1);border-radius:13px;padding:11px 13px;background:#fbfdfe;">
+                <span style="width:9px;height:9px;border-radius:50%;background:{{ tl.dot }};flex:none;"></span>
+                <span style="font-size:13px;font-weight:600;color:#1b2542;">{{ tl.name }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" style="padding:100px clamp(20px,5vw,40px);background:#cdddea;">
+    <div style="max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:54px;align-items:center;">
+      <div data-reveal="" style="position:relative;">
+        <div style="border-radius:24px;overflow:hidden;aspect-ratio:4/5;background-image:url('images/nicole-profile-v2.png');background-size:cover;background-position:center top;border:3px solid #7cb4d6;"></div>
+      </div>
+      <div data-reveal="">
+        <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:16px;">About</div>
+        <h2 style="margin:0 0 22px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#1b2542;font-size:clamp(30px,4.2vw,44px);line-height:1.06;letter-spacing:-0.03em;">I’m curious by nature.</h2>
+        <p style="font-size:16.5px;line-height:1.6;color:#46557a;margin:0 0 16px;">I like exploring new ideas, asking questions, and working through sticky problems that need creative solutions.</p>
+        <p style="font-size:16.5px;line-height:1.6;color:#46557a;margin:0 0 16px;">That mindset shapes how I approach instructional design. I bring a research-informed lens to design and development, taking time to understand the learner, the context, and the real problem before deciding what the learning experience should become.</p>
+        <p style="font-size:16.5px;line-height:1.6;color:#46557a;margin:0 0 16px;">I came into instructional design from the classroom, where I learned that information is not the same as learning. My university experience in Australia, in an authentic and experiential program, deepened that belief. I design with the idea that learning becomes engaging when it feels real , when learners can connect it to their actual lives and apply it in meaningful ways.</p>
+        <p style="font-size:16.5px;line-height:1.6;color:#46557a;margin:0 0 16px;">I like the space between “I don’t know yet” and “let’s figure out what’s possible.” It is how I approach new tools, complex content, SME conversations, accessibility challenges, and AI-assisted workflows: with curiosity, persistence, and a willingness to figure things out.</p>
+        <p style="font-size:16.5px;line-height:1.6;color:#1b2542;font-weight:600;margin:0;">I build learning that is practical, accessible, and human.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HIRE-ME BANNER ===== -->
+  <section style="padding:64px clamp(16px,4vw,40px) 90px;">
+    <div data-reveal="" style="max-width:1120px;margin:0 auto;border-radius:30px;overflow:hidden;background:linear-gradient(118deg,#ffc27a 0%,#ffb05a 26%,#f1907f 62%,#b97f9e 100%);padding:clamp(40px,6vw,72px) clamp(28px,5vw,64px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px;">
+      <div style="max-width:680px;">
+        <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#1b2542;font-weight:700;margin-bottom:14px;opacity:.7;">Open to work</div>
+        <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#1b2542;font-size:clamp(30px,4.6vw,50px);line-height:1.04;letter-spacing:-0.035em;">Currently open to instructional design roles.</h2>
+      </div>
+      <a href="#contact" onClick="{{ goContact }}" style="flex:none;display:inline-flex;align-items:center;gap:9px;background:#1b2542;color:#fff;font-weight:700;font-size:17px;text-decoration:none;padding:16px 34px;border-radius:100px;box-shadow:0 14px 34px -10px rgba(27,37,66,.5);">Let's talk →</a>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT / FOOTER ===== -->
+  <footer id="contact" style="position:relative;background:#141d35;color:#eef5f9;overflow:hidden;">
+    <div style="position:absolute;bottom:-40%;left:50%;transform:translateX(-50%);width:120vw;height:80vw;border-radius:50%;background:radial-gradient(circle,rgba(241,144,127,.16) 0%,rgba(255,176,90,.06) 38%,transparent 64%);pointer-events:none;"></div>
+    <div style="position:relative;max-width:1120px;margin:0 auto;padding:80px clamp(20px,5vw,40px);min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;">
+      <span style="display:inline-flex;width:34px;height:34px;border-radius:10px;background:#f1907f;align-items:center;justify-content:center;"><span style="display:inline-block;width:12px;height:12px;background:#141d35;border-radius:3px;transform:rotate(45deg);"></span></span>
+      
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.05;letter-spacing:-0.03em;color:#fff;max-width:620px;">Curious design for real-world learning.</h2><a href="mailto:n.neutzling@gmail.com" style="display:inline-flex;align-items:center;gap:9px;background:#f1907f;color:#1b2542;font-weight:700;font-size:17px;text-decoration:none;padding:16px 36px;border-radius:100px;box-shadow:0 14px 34px -10px rgba(241,144,127,.6);">Email me →</a>
+      <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:center;font-size:15px;">
+        <a href="https://www.linkedin.com/in/nicoleneutzling" target="_blank" rel="noopener" style="color:#ffb05a;text-decoration:none;font-weight:600;border-bottom:2px solid rgba(255,176,90,.5);padding-bottom:2px;">LinkedIn ↗</a>
+        <a href="mailto:n.neutzling@gmail.com" style="color:#ffb05a;text-decoration:none;font-weight:600;border-bottom:2px solid rgba(255,176,90,.5);padding-bottom:2px;">n.neutzling@gmail.com</a>
+      </div>
+      <div style="margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:#fff;letter-spacing:-0.03em;">Nicole Neutzling</span>
+        <span style="font-size:12.5px;color:#7e89a8;">© 2026 · Built to WCAG AA · Instructional Design Portfolio</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== CASE STUDY MODAL ===== -->
+  <sc-if value="{{ hasSelected }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeProject }}" style="position:fixed;inset:0;z-index:120;background:rgba(20,29,53,.62);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:clamp(14px,5vh,56px) 14px;animation:scrimin .2s ease both;">
+      <article onClick="{{ stop }}" style="background:#ffffff;border-radius:26px;max-width:860px;width:100%;overflow:hidden;box-shadow:0 40px 90px -30px rgba(20,29,53,.6);">
+        <div style="position:relative;background:{{ sel.headBg }};padding:36px clamp(22px,4vw,40px) 32px;">
+          <button onClick="{{ closeProject }}" aria-label="Close" style="position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:22px;line-height:1;color:#1b2542;">×</button>
+          <div style="font-size:11.5px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;color:{{ sel.headSub }};margin-bottom:14px;">{{ sel.context }}</div>
+          <h2 style="margin:0 0 18px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(26px,4.2vw,38px);line-height:1.06;letter-spacing:-0.03em;color:{{ sel.headText }};max-width:92%;">{{ sel.title }}</h2>
+          <div style="display:inline-flex;align-items:center;gap:9px;background:#ffffff;border-radius:14px;padding:11px 16px;">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(241,144,127,.16);color:#d76b58;font-weight:800;font-size:12px;">✓</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#1b2542;">{{ sel.outcome }}</span>
+          </div>
+        </div>
+
+        <div style="padding:clamp(24px,4vw,40px);">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px;">
+            <sc-for list="{{ sel.tools }}" as="t" hint-placeholder-count="4">
+              <span style="font-size:12px;font-weight:600;color:#46557a;border:1px solid rgba(27,37,66,.12);border-radius:100px;padding:5px 12px;">{{ t }}</span>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:26px;">
+            <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:9px;">Overview</div><p style="margin:0;font-size:16px;line-height:1.62;color:#3b4a6b;">{{ sel.overview }}</p></div>
+            <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:9px;">The challenge</div><p style="margin:0;font-size:16px;line-height:1.62;color:#3b4a6b;">{{ sel.challenge }}</p></div>
+            <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:9px;">My role</div><p style="margin:0;font-size:16px;line-height:1.62;color:#3b4a6b;">{{ sel.role }}</p></div>
+            <div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:9px;">Design &amp; development approach</div>
+              <p style="margin:0 0 16px;font-size:16px;line-height:1.62;color:#3b4a6b;">{{ sel.approach }}</p>
+              <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ sel.approachPoints }}" as="pt" hint-placeholder-count="5">
+                  <li style="display:flex;gap:12px;align-items:flex-start;font-size:15.5px;line-height:1.5;color:#3b4a6b;">
+                    <span style="margin-top:7px;width:7px;height:7px;border-radius:2px;background:{{ sel.headBg }};flex:none;transform:rotate(45deg);"></span>
+                    <span>{{ pt }}</span>
+                  </li>
+                </sc-for>
+              </ul>
+            </div>
+            <sc-if value="{{ sel.hasStatus }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#eef5f9;border-radius:16px;padding:22px;">
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#1b2542;font-weight:700;margin-bottom:9px;">{{ sel.statusLabel }}</div>
+                <p style="margin:0;font-size:16px;line-height:1.62;color:#3b4a6b;">{{ sel.status }}</p>
+              </div>
+            </sc-if>
+            <div style="background:#f4f9fb;border-radius:16px;padding:22px;border:1px solid rgba(241,144,127,.28);">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#d76b58;font-weight:700;margin-bottom:9px;">What this project demonstrates</div>
+              <p style="margin:0;font-size:16px;line-height:1.62;color:#1b2542;font-weight:500;">{{ sel.demonstrates }}</p>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px;">
+            <sc-for list="{{ sel.shots }}" as="shot" hint-placeholder-count="2">
+              <div style="height:200px;border-radius:14px;background-image:{{ shot.bg }};background-size:cover;background-position:{{ shot.pos }};display:flex;align-items:flex-end;justify-content:flex-start;border:1px solid rgba(27,37,66,.08);overflow:hidden;">
+                <sc-if value="{{ shot.isImg }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:rgba(27,37,66,.66);backdrop-filter:blur(3px);border-radius:8px;padding:5px 10px;margin:10px;">{{ shot.label }}</span>
+                </sc-if>
+                <sc-if value="{{ shot.isPlaceholder }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-family:ui-monospace,monospace;font-size:11px;color:#7e8aa6;background:#fff;border-radius:100px;padding:4px 10px;margin:auto;">{{ shot.label }}</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:11px;margin-top:28px;padding-top:24px;border-top:1px solid rgba(27,37,66,.08);">
+            <sc-for list="{{ sel.links }}" as="l" hint-placeholder-count="2">
+              <a href="{{ l.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;font-size:14px;padding:12px 18px;border-radius:100px;background:{{ l.bg }};color:{{ l.color }};border:{{ l.border }};">{{ l.glyph }} {{ l.label }} ↗</a>
+            </sc-for>
+          </div>
+        </div>
+      </article>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  state = { menuOpen: false, selectedSlug: null };
+
+  rawProjects = [
+    {
+      slug: 'peak-pmp-prep', num: '01', accent: '#f1907f',
+      title: 'Peak PMP Prep — Intensive PMP Exam Preparation',
+      context: 'Certification exam prep',
+      outcome: '5-star Google rating · 600+ successful learners',
+      tools: ['Articulate Rise', 'Articulate Storyline', 'JavaScript', 'Claude Code'],
+      overview: 'A 10-week intensive course supporting professionals preparing for the PMP certification exam, taken from concept to launch in roughly three months. I worked across a multidisciplinary team — subject matter expert, video production, and graphic designer — focused on designing the learning experience, structuring content, supporting development workflows, and building interactive learning and assessment components.',
+      challenge: 'Create a high-quality, comprehensive PMP prep experience on a compressed timeline, balancing depth, clarity, engagement, and realistic exam practice for adult learners juggling work and life. Learners needed exam-style questions, meaningful feedback, and familiarity with the pacing and structure of certification-style assessment.',
+      role: 'I organized content into a clear 10-week pathway, supported asset development, built eLearning components, and created assessment experiences aligned to PMP exam prep. I also implemented technology-enhanced solutions: using ChatGPT, Claude, and Claude Code, I customized JavaScript inside Storyline to build a custom exam simulator — five simulators with more than 500 practice questions. When Storyline\u2019s customization hit its limits, I used Claude Design to prototype an app-based exam experience for added flexibility and a more tailored practice environment.',
+      approach: 'An intensive but structured experience, organized to support progression over 10 weeks with an emphasis on applied understanding, exam readiness, and learner confidence.',
+      approachPoints: [
+        'Coordinated with the SME to clarify priorities and organize complex content',
+        'Collaborated with video and graphic teams for a cohesive learner experience',
+        'Developed interactive components in Articulate Rise and Storyline',
+        'Built exam-style practice for retrieval, application, and confidence',
+        'Used AI-supported tools to customize functionality and solve technical constraints',
+        'Iterated on structure and experience as the project evolved',
+      ],
+      statusLabel: 'Current status',
+      status: 'The course is in a redesign phase with a new launch planned for September — strengthening the learner experience, improving flow and usability, and building on lessons learned from the original rapid-development process.',
+      demonstrates: 'Leading instructional design in a fast-paced, high-stakes environment: rapid course development, SME collaboration, eLearning design, assessment strategy, AI-supported development, and creative problem-solving when standard tools don\u2019t fully meet learning needs.',
+      shots: [
+        { img: 'images/peak-storyboard-question.png', label: 'Storyboard example — question screen', pos: 'center' },
+        { img: 'images/peak-storyboard-brand.png', label: 'Storyboard example — brand & visual style', pos: 'center' },
+      ],
+      links: [
+        { type: 'website', label: 'Visit the Peak PMP Prep website', url: 'https://peakpmprep.com/' },
+        { type: 'storyboard', label: 'View example storyboard', url: 'https://docs.google.com/presentation/d/1Ny4dEzIFLJ1Do_qnWHW8AbBcV7f-SEL-/edit?usp=sharing&ouid=118044540957710536406&rtpof=true&sd=true' },
+      ],
+    },
+    {
+      slug: 'real-estate-program', num: '02', accent: '#6fb3d4',
+      title: 'Real Estate Development Program — Professional Development Series',
+      context: 'Professional development series',
+      outcome: 'Unified 9 subject-matter experts into one cohesive program',
+      tools: ['Program design', 'SME collaboration', 'Video production', 'Program evaluation'],
+      overview: 'A professional development program for people already working in real estate, designed around the real estate development cycle — its key stages, roles, decisions, and considerations. I joined partway through, when about half of one course already existed, and brought structure, consistency, and instructional-design strategy to the remaining development.',
+      challenge: 'Multiple subject matter experts, a complex professional audience, and a program concept that needed to connect individual courses into one larger pathway. With nine SMEs involved, the work required careful consultation, content organization, relationship-building, and instructional-design guidance so the program felt cohesive rather than fragmented.',
+      role: 'I worked one-on-one with nine subject matter experts to design courses connected to different aspects of the development cycle — end-to-end, from consultation and content planning through design, development, and refinement. I collaborated with a film crew on video-based learning assets, translating expert knowledge into teachable content and ensuring media supported each course\u2019s goals. More recently, I completed an evaluation of the existing courses and developed recommendations for the program\u2019s future direction.',
+      approach: 'Create a coherent program experience while preserving each expert\u2019s unique expertise — connecting course content to the development cycle so learners can see how individual topics relate to the broader professional context.',
+      approachPoints: [
+        'Consulted with nine SMEs to clarify content, audience needs, and learning goals',
+        'Designed course structures aligned to the overall program vision',
+        'Translated expert knowledge into practical professional development',
+        'Supported video planning and production with a film crew',
+        'Created consistency across multiple courses and contributors',
+        'Evaluated completed courses and recommended future improvements',
+      ],
+      statusLabel: 'Outcome & direction',
+      status: 'The program evolved from an initial course concept into a broader professional-development series connected to the real estate development cycle. My recent evaluation provided strategic recommendations for the next stage — improving course consistency, learner navigation, instructional flow, and overall program direction.',
+      demonstrates: 'Entering an active project, building structure, collaborating with multiple experts, and moving a complex learning initiative forward: stakeholder consultation, program-level thinking, professional-development design, video-supported learning, and evaluation-informed improvement.',
+      shots: [
+        { img: 'images/redp-workbook.png', label: 'Project workbook', pos: 'center top' },
+        { img: 'images/redp-commercial-course.png', label: 'Commercial course', pos: 'center' },
+      ],
+      links: [
+        { type: 'website', label: 'Visit the REDP program website', url: 'https://redicanada.org/education/redp-online/' },
+        { type: 'live', label: 'Open the course', url: 'https://share.articulate.com/48rgmoHNFepoRJ7yjQRPm' },
+      ],
+    },
+    {
+      slug: 'phsa-pathogens', num: '03', accent: '#34456b',
+      title: 'PHSA High Threat Pathogens — Provincial Health-Care Training',
+      context: 'Provincial health-care training',
+      outcome: 'Province-wide course redeveloped mid-project without losing quality',
+      tools: ['Articulate Storyline', 'Claude Code', 'Canva', 'Canva AI'],
+      overview: 'Design and development of a province-wide course on high threat pathogens, created to support consistent learning in a health-care context where accuracy, clarity, and usability were essential. The work required close collaboration with subject matter experts to translate complex, high-stakes health information into a structured eLearning experience — spanning instructional design, storyboarding, style-guide development, and build in Articulate Storyline.',
+      challenge: 'The content was complex, technical, and highly sensitive to accuracy — and had to be clear, consistent, and accessible for a broad health-care audience. A major challenge came when the direction changed partway through: after initial storyboards and style guides were developed, the course needed to be redeveloped to align with the updated approach, demanding adaptability and rapid problem-solving while maintaining design quality.',
+      role: 'I worked with subject matter experts to design and develop the course — organizing complex content, developing storyboards, creating style guides, and building the eLearning experience. When the direction shifted, I supported the redevelopment, adapting the design and build to the new requirements. I used Storyline for development and incorporated Claude Code, Canva, and Canva AI to support design, customization, and production efficiencies.',
+      approach: 'Clarity, consistency, and learner usability — supporting accurate understanding of high threat pathogens while avoiding unnecessary cognitive overload.',
+      approachPoints: [
+        'Collaborated with SMEs to confirm content accuracy and learning priorities',
+        'Translated technical health-care information into clear learning sequences',
+        'Developed storyboards to guide course structure and stakeholder review',
+        'Created style guides to support consistency across the course',
+        'Built and revised eLearning components in Articulate Storyline',
+        'Used AI-supported tools to assist design and development workflows',
+        'Redeveloped materials in response to a significant mid-project change',
+      ],
+      statusLabel: '',
+      status: '',
+      demonstrates: 'Working on complex, high-stakes health-care learning in a changing environment: SME collaboration, technical content translation, storyboarding, style-guide development, eLearning production, and adaptability when scope or direction changes.',
+      shots: [
+        { img: 'images/phsa-storyline-title.png', label: 'Storyline course screen', pos: 'center' },
+        { img: 'images/phsa-storyline-3is.png', label: 'Storyline course screen', pos: 'center' },
+      ],
+      links: [
+      ],
+    },
+    {
+      slug: 'ipac-refresher', num: '04', accent: '#9ed94d',
+      title: 'IPAC for Health-Care Workers — 30-Minute Refresher',
+      context: 'Provincial health-care training',
+      outcome: '90-minute course condensed into a focused 30-minute refresher',
+      tools: ['Articulate Storyline', 'SME collaboration', 'Storyboarding', 'Scenario design'],
+      overview: 'A refresher course on Infection Prevention and Control (IPAC) for provincial health-care workers, created by condensing an existing 90-minute foundational course into a focused 30-minute refresh. The goal was to reinforce critical IPAC practices for staff who had already completed the full training — keeping the content accurate and practice-focused while removing the cognitive load of re-teaching everything from scratch.',
+      challenge: 'The original 90-minute course covered the topic comprehensively, but a full retake was too long for a refresher audience. The challenge was deciding what to keep, what to compress, and what to cut — without losing accuracy or the practices that matter most at the point of care. That required a clear, defensible method for prioritizing content and a way to guide SMEs through condensing decisions rather than defaulting to "keep everything."',
+      role: 'I led the condensing effort end-to-end: analyzing the original course against refresher learning goals, building a storyboard for the streamlined 30-minute flow, and designing a sample scenario interaction to keep the refresher active rather than passive. I also created a guidance document to help SMEs make consistent decisions about what content to retain, compress, or remove.',
+      approach: 'Refresh, don\u2019t re-teach — prioritize the highest-risk, highest-frequency IPAC practices and deliver them in an active, scenario-driven format that respects the learner\u2019s existing knowledge.',
+      approachPoints: [
+        'Analyzed the original 90-minute course against refresher learning objectives',
+        'Built a prioritization method to decide what to keep, compress, or cut',
+        'Storyboarded a focused 30-minute flow centered on critical practices',
+        'Designed a sample scenario interaction to keep the refresher active',
+        'Authored an SME guidance document for consistent condensing decisions',
+        'Maintained clinical accuracy and accessibility throughout the redesign',
+      ],
+      statusLabel: '',
+      status: '',
+      demonstrates: 'Condensing and curriculum redesign in a high-stakes health-care context: content prioritization, SME enablement, storyboarding for a tightened scope, and scenario-based design that respects prior learning.',
+      shots: [
+        { img: 'images/ipac-storyboard-frame.png', label: 'Storyboard frame', pos: 'center top' },
+        { img: 'images/ipac-scenario.png', label: 'Scenario interaction', pos: 'center top' },
+      ],
+      links: [
+        { type: 'storyboard', label: 'View sample storyboard', url: 'https://docs.google.com/document/d/1oUDGWqAXb2JmLHCMliw53DQqbGZBxs3ZaOzPaaMU3HU/edit?usp=sharing' },
+        { type: 'doc', label: 'Read the SME condensing guide', url: 'https://docs.google.com/document/d/1gCqGCz6Cr-SIr6JMo3vwJXC3n97LR1d6/edit?usp=sharing&ouid=118044540957710536406&rtpof=true&sd=true' },
+      ],
+    },
+    {
+      slug: 'acc-trip-leader', num: '05', accent: '#ffb05a',
+      title: 'Alpine Club of Canada — Trip Leader Guide',
+      context: 'Volunteer outdoor leadership training',
+      outcome: 'Static handbook transformed into scenario-based eLearning',
+      tools: ['Articulate Rise', 'Articulate AI', 'Rise AI Voice', 'Canva AI', 'Gemini'],
+      overview: 'An eLearning course designed to support volunteer trip leaders in understanding their role, responsibilities, and decision-making considerations when leading club activities. The course was developed from the updated Trip Leader Guide and the previous Trip Leader Handbook, transforming existing written resources into a more accessible, engaging, and scenario-based learning experience. The goal is a practical resource that helps trip leaders apply guidance in realistic situations while supporting consistency, confidence, and safety-focused decision-making.',
+      challenge: 'The original materials contained valuable information, but they needed to be translated into a more interactive and learner-friendly format. Because trip leadership involves judgment, communication, planning, group management, and risk awareness, the course needed to move beyond simply presenting information — it had to help learners think through real-world situations and understand how the guidance applies in practice. A second challenge was creating a polished course efficiently within a volunteer context, using available tools strategically to support rapid development, visual design, and scenario creation.',
+      role: 'I designed and developed the course using the updated Trip Leader Guide and the previous Trip Leader Handbook as the primary source materials. I used Articulate AI to help generate the initial course structure and learning content from the existing documents, then refined the experience to improve clarity, flow, and relevance for adult learners. I also used Canva AI and Gemini to create custom graphics, and brought scenario-based learning into the course with Articulate Rise AI Voice Overs — realistic scenarios that help learners consider how they might respond to common trip leadership situations.',
+      approach: 'Make trip leadership guidance easier to understand, navigate, and apply. Rather than simply converting the handbook into an online format, the learning experience focuses on practical application and decision-making.',
+      approachPoints: [
+        'Reviewed and synthesized content from the updated Trip Leader Guide and previous Handbook',
+        'Used Articulate AI to generate an initial course structure from source materials',
+        'Refined AI-generated content for tone, clarity, accuracy, and learner relevance',
+        'Created graphics with Canva AI and Gemini for key concepts and visual consistency',
+        'Developed scenario-based elements using Articulate Rise AI Voice Overs',
+        'Designed for practical decision-making by volunteer trip leaders',
+        'Gathering feedback to refine the course before completion',
+      ],
+      statusLabel: 'Current status',
+      status: 'The course is currently in progress and still receiving feedback. Revisions are being made to ensure the final learning experience is accurate, useful, and aligned with the needs of trip leaders and the organization.',
+      demonstrates: 'Thoughtful use of AI-supported tools within the instructional design process: transforming static documents into interactive learning, designing for volunteer and adult learners, developing scenario-based training, creating visuals with generative AI, and refining content through feedback and iteration — on subject matter where judgment, communication, and safety are central.',
+      shots: [
+        { img: 'images/acc-course-title.png', label: 'Course visual', pos: 'center top' },
+        { img: 'images/acc-course-scenario.png', label: 'Course visual', pos: 'center top' },
+      ],
+      links: [
+        { type: 'live', label: 'Open the course', url: 'courses/alpine-club/index.html' },
+      ],
+    },
+    {
+      slug: 'bow-valley-mountains', num: '06', accent: '#6fb3d4',
+      title: 'Mountains of the Bow Valley — Storyline Interaction Challenge',
+      context: 'Self-directed Storyline challenge',
+      outcome: 'Custom dial- and slider-driven interactions with AI-generated visuals and audio',
+      tools: ['Articulate Storyline', 'Dials & sliders', 'AI image generation', 'AI audio generation'],
+      overview: 'A self-directed Storyline challenge built around the peaks of the Bow Valley, created to push my command of Storyline\u2019s interactive controls. The piece uses dials and sliders as the core navigation and discovery mechanic, letting learners actively explore the mountains rather than passively click through screens. I paired the interaction work with AI-generated mountain imagery and AI-created audio to produce a fully realized, atmospheric experience on my own.',
+      challenge: 'Dials and sliders are some of Storyline\u2019s most powerful but least forgiving controls — they require careful state management, variable logic, and triggers to feel smooth and intuitive. The challenge was to make these inputs drive meaningful, responsive content while keeping the experience approachable, and to source cohesive visuals and audio for a personal project without a media budget or production team.',
+      role: 'I designed and built the entire piece solo — wiring dials and sliders to variables and triggers so learner input changes what is shown and heard, and tuning the interaction states until they felt natural. I used AI image generation to create the Bow Valley mountain visuals and AI tools to generate the accompanying audio, then assembled and refined everything in Storyline.',
+      approach: 'Treat interaction as the content — let dials and sliders turn exploration into the learning experience, supported by atmosphere (visuals and sound) that makes the place feel real.',
+      approachPoints: [
+        'Mapped dial and slider states to Storyline variables and triggers',
+        'Built responsive content that reacts to learner input in real time',
+        'Tuned interaction feel and feedback for smooth, intuitive control',
+        'Generated cohesive Bow Valley mountain imagery with AI tools',
+        'Created accompanying audio with AI to build atmosphere',
+        'Assembled, tested, and refined the full experience in Storyline',
+      ],
+      statusLabel: 'Status & next steps',
+      status: 'A personal Storyline challenge built to sharpen interactive-control skills and experiment with AI-generated media. Next, I\u2019d like to expand it to include more information about each mountain and develop it into a full interactive experience.',
+      demonstrates: 'Advanced Storyline interactivity and creative resourcefulness: dial- and slider-driven mechanics, variable and trigger logic, and thoughtful use of AI to generate visuals and audio for a polished, self-produced learning experience.',
+      shots: [
+        { img: 'images/bow-yamnuska.png', label: 'Îyâ Mnathka — Mount Yamnuska', pos: 'center' },
+        { img: 'images/bow-castle.png', label: 'Miistukskoowa — Castle Mountain', pos: 'center' },
+      ],
+      links: [
+        { type: 'live', label: 'Open the interaction', url: 'courses/bow-valley/story.html' },
+      ],
+    },
+  ];
+
+  steps = [
+    { tag: '01', title: 'Analyze', desc: 'Needs analysis, SME consultation, and action mapping to find the real gap.', color: '#9ed94d' },
+    { tag: '02', title: 'Design', desc: 'Learning objectives, storyboards, style guides, and the ID model that fits.', color: '#6fb3d4' },
+    { tag: '03', title: 'Develop', desc: 'Build interactions, simulators, and assessments — customizing tools when needed.', color: '#ffb05a' },
+    { tag: '04', title: 'Implement', desc: 'Deploy, pilot with real learners, and iterate on friction.', color: '#f1907f' },
+    { tag: '05', title: 'Evaluate', desc: 'Measure outcomes, gather feedback, and recommend improvements.', color: '#f1907f' },
+  ];
+
+  skills = ['Needs analysis', 'SME consultation', 'Storyboarding', 'Style guides', 'Scenario writing', 'Assessment design', 'Accessibility / WCAG', 'Learning science', 'AI-supported development', 'Program evaluation'];
+
+  tools = [
+    { name: 'Articulate Storyline', dot: '#f1907f' }, { name: 'Articulate Rise', dot: '#ffb05a' },
+    { name: 'JavaScript', dot: '#6fb3d4' }, { name: 'Claude Code', dot: '#34456b' },
+    { name: 'Claude Design', dot: '#f1907f' }, { name: 'ChatGPT', dot: '#9ed94d' },
+    { name: 'Canva / Canva AI', dot: '#ffb05a' },
+    { name: 'Adobe Premiere', dot: '#34456b' }, { name: 'Adobe Photoshop', dot: '#f1907f' },
+    { name: 'SCORM', dot: '#6fb3d4' }, { name: 'LMS platforms', dot: '#ffb05a' },
+  ];
+
+  testimonials = [
+    { quote: 'Nicole came onto a complex, multi-SME program midstream and immediately brought structure and momentum. The whole thing finally felt like one cohesive experience.', name: 'Program Lead', role: 'placeholder', mark: '#f1907f' },
+    { quote: 'When the tools couldn\u2019t do what we needed, Nicole found a way — custom simulators, an app-based prototype, all on a tight timeline. Genuinely creative problem-solving.', name: 'Subject Matter Expert', role: 'placeholder', mark: '#ffb05a' },
+    { quote: 'Calm and adaptable when the project direction changed late. The redevelopment kept its quality and clarity, and the SMEs trusted the process throughout.', name: 'Project Manager', role: 'placeholder', mark: '#6fb3d4' },
+  ];
+
+  navItems = [
+    { label: 'Selected work', id: 'work' }, { label: 'Process', id: 'process' },
+    { label: 'Skills & tools', id: 'skills' },
+    { label: 'About', id: 'about' }, { label: 'Contact', id: 'contact' },
+  ];
+
+  chipFor(link) {
+    const m = {
+      'articulate-review': { glyph: 'A', title: 'Articulate Review demo', bg: '#f1907f', fg: '#fff' },
+      'github': { glyph: '\u2039\u203a', title: 'Code on GitHub', bg: '#1b2542', fg: '#fff' },
+      'live': { glyph: '\u2197', title: 'Live demo', bg: '#6fb3d4', fg: '#fff' },
+      'video': { glyph: '\u25B6', title: 'Video', bg: '#ffb05a', fg: '#1b2542' },
+      'storyboard': { glyph: '\u25A6', title: 'Example storyboard', bg: '#34456b', fg: '#fff' },
+      'doc': { glyph: '\u25A4', title: 'Document', bg: '#9ed94d', fg: '#1b2542' },
+      'website': { glyph: '\u2197', title: 'Program website', bg: '#1b2542', fg: '#fff' },
+    };
+    return m[link.type] || { glyph: '\u2197', title: 'Link', bg: '#6fb3d4', fg: '#fff' };
+  }
+  linkStyle(link) {
+    if (link.type === 'github') return { bg: '#1b2542', color: '#fff', border: 'none', glyph: '\u2039\u203a' };
+    if (link.type === 'live') return { bg: '#6fb3d4', color: '#fff', border: 'none', glyph: '' };
+    if (link.type === 'video') return { bg: '#ffb05a', color: '#1b2542', border: 'none', glyph: '\u25B6' };
+    if (link.type === 'storyboard') return { bg: '#34456b', color: '#fff', border: 'none', glyph: '\u25A6' };
+    if (link.type === 'doc') return { bg: '#9ed94d', color: '#1b2542', border: 'none', glyph: '\u25A4' };
+    if (link.type === 'website') return { bg: '#1b2542', color: '#fff', border: 'none', glyph: '\u2197' };
+    return { bg: '#f1907f', color: '#1b2542', border: 'none', glyph: 'A' };
+  }
+
+  scrollToId = (id) => {
+    const root = this.rootRef.current;
+    const el = root && root.querySelector('#' + id);
+    if (el) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const y = el.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+    }
+    this.setState({ menuOpen: false });
+  };
+  toggleMenu = () => this.setState(s => ({ menuOpen: !s.menuOpen }));
+  closeMenu = () => this.setState({ menuOpen: false });
+  scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  openProject = (slug) => this.setState({ selectedSlug: slug });
+  closeProject = () => this.setState({ selectedSlug: null });
+
+  componentDidMount() {
+    const root = this.rootRef.current;
+    if (!root) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reveals = root.querySelectorAll('[data-reveal]');
+    const showEl = el => { el.style.opacity = '1'; el.style.transform = 'none'; };
+    const hardShow = el => { el.style.transition = 'none'; el.style.opacity = '1'; el.style.transform = 'none'; };
+
+    if (reduce) {
+      reveals.forEach(showEl);
+    } else {
+      reveals.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(26px)';
+        el.style.transition = 'opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)';
+      });
+      try {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => { if (e.isIntersecting) { showEl(e.target); io.unobserve(e.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px -7% 0px' });
+        reveals.forEach(el => io.observe(el));
+        this._io = io;
+      } catch (e) { reveals.forEach(hardShow); }
+      this._fallback = setTimeout(() => reveals.forEach(hardShow), 2000);
+    }
+
+    const wordmark = root.querySelector('[data-wordmark]');
+    const hero = root.querySelector('[data-hero]');
+    const route = root.querySelector('[data-route]');
+    const progress = root.querySelector('[data-progress]');
+    const onScroll = () => {
+      const y = window.pageYOffset;
+      if (wordmark && hero) wordmark.style.color = (y > hero.offsetHeight - 72) ? '#1b2542' : '#ffffff';
+      if (route && progress) {
+        const r = route.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const travelled = Math.max(vh * 0.5 - r.top, 0);
+        progress.style.height = Math.max(Math.min(travelled, r.height - 80), 0) + 'px';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    this._onScroll = onScroll;
+    onScroll();
+
+    if (!reduce && hero) {
+      const layers = [...hero.querySelectorAll('[data-glow]')];
+      const bases = layers.map(el => el.style.transform || '');
+      let tx = 0;
+      const t0 = performance.now();
+      const tick = () => {
+        const r = hero.getBoundingClientRect();
+        if (r.bottom > 0) {
+          const scrolled = Math.max(-r.top, 0);
+          const t = (performance.now() - t0) / 1000;
+          layers.forEach((el, i) => {
+            const d = parseFloat(el.dataset.depth) || 0;
+            const sun = el.hasAttribute('data-sun');
+            const cloud = el.hasAttribute('data-cloud');
+            const px = tx * d / 30 + (sun ? Math.cos(t / 9) * 14 : 0) + (cloud ? Math.sin(t / 16 + i * 1.7) * 22 : 0);
+            const py = scrolled * d / 80 + (sun ? Math.sin(t / 5.5) * 9 + 6 : 0) + (cloud ? Math.sin(t / 11 + i * 2.3) * 4 : 0);
+            el.style.transform = bases[i] + ' translate(' + px + 'px,' + py + 'px)';
+          });
+        }
+        this._glowRaf = requestAnimationFrame(tick);
+      };
+      this._glowRaf = requestAnimationFrame(tick);
+      const onMove = (e) => {
+        const r = hero.getBoundingClientRect();
+        tx = ((e.clientX - r.left) / r.width - 0.5) * -2 * 18;
+      };
+      hero.addEventListener('mousemove', onMove);
+      this._hero = hero; this._onMove = onMove;
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._io) this._io.disconnect();
+    if (this._glowRaf) cancelAnimationFrame(this._glowRaf);
+    if (this._fallback) clearTimeout(this._fallback);
+    if (this._onScroll) window.removeEventListener('scroll', this._onScroll);
+    if (this._hero && this._onMove) this._hero.removeEventListener('mousemove', this._onMove);
+  }
+
+  renderVals() {
+    const projects = this.rawProjects.map(p => {
+      const types = p.links.map(l => l.type);
+      const linkSummary = p.links.length === 0
+        ? 'View case study'
+        : (types.includes('github')
+        ? 'demo & code available'
+        : (types.includes('live') ? 'demo & app available'
+          : (types.includes('video') ? 'demo & video available'
+            : (types.includes('website') ? 'program website available'
+              : (types.includes('storyboard') ? 'example storyboard available'
+                : (types.includes('doc') ? 'documentation available' : 'interactive demo available'))))));
+      return {
+        ...p,
+        linkSummary,
+        chips: p.links.map(l => this.chipFor(l)),
+        open: () => this.openProject(p.slug),
+      };
+    });
+    const navItems = this.navItems.map(n => ({
+      label: n.label, href: '#' + n.id,
+      onClick: (e) => { if (e && e.preventDefault) e.preventDefault(); this.scrollToId(n.id); },
+    }));
+    const sp = this.rawProjects.find(p => p.slug === this.state.selectedSlug);
+    let sel = null;
+    if (sp) {
+      const lightHead = sp.accent === '#ffb05a' || sp.accent === '#6fb3d4';
+      sel = {
+        title: sp.title, context: sp.context, outcome: sp.outcome, tools: sp.tools,
+        overview: sp.overview, challenge: sp.challenge, role: sp.role,
+        approach: sp.approach, approachPoints: sp.approachPoints,
+        hasStatus: !!sp.status, statusLabel: sp.statusLabel || 'Current status', status: sp.status,
+        demonstrates: sp.demonstrates,
+        headBg: sp.accent, headText: lightHead ? '#1b2542' : '#ffffff',
+        headSub: lightHead ? 'rgba(27,37,66,.65)' : 'rgba(255,255,255,.8)',
+        shots: (sp.shots || []).map(s => (typeof s === 'string')
+          ? { label: s, bg: 'repeating-linear-gradient(135deg,#d6e6ef 0 13px,#e4f0f6 13px 26px)', pos: 'center', isImg: false, isPlaceholder: true }
+          : { label: s.label, bg: 'url("' + s.img + '")', pos: s.pos || 'center', isImg: true, isPlaceholder: false }),
+        links: sp.links.map(l => { const s = this.linkStyle(l); return { url: l.url, label: l.label, ...s }; }),
+      };
+    }
+    return {
+      menuOpen: this.state.menuOpen,
+      hasSelected: !!sp,
+      sel: sel || { title: '', context: '', outcome: '', tools: [], overview: '', challenge: '', role: '', approach: '', approachPoints: [], hasStatus: false, statusLabel: '', status: '', demonstrates: '', headBg: '#1b2542', headText: '#fff', headSub: '#fff', shots: [], links: [] },
+      projects, skills: this.skills, tools: this.tools, steps: this.steps, testimonials: this.testimonials, navItems,
+      rootRef: this.rootRef,
+      toggleMenu: this.toggleMenu, closeMenu: this.closeMenu, scrollTop: this.scrollTop,
+      closeProject: this.closeProject, stop: (e) => e && e.stopPropagation && e.stopPropagation(),
+      goWork: (e) => { if (e && e.preventDefault) e.preventDefault(); this.scrollToId('work'); },
+      goContact: (e) => { if (e && e.preventDefault) e.preventDefault(); this.scrollToId('contact'); },
+    };
+  }
+}
+</script>
+</body>
+</html>
