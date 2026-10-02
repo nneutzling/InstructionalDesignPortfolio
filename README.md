@@ -6,7 +6,7 @@ Static portfolio site, ready for GitHub Pages.
 - `support.js` — runtime the page needs; keep it next to `index.html`
 - `images/` — screenshots and profile photo
 - `courses/` — hosted eLearning modules, one folder each, linked from the case studies
-  - `alpine-club/` — Alpine Club of Canada Trip Leader Guide (public)
+  - `alpine-club/` — Alpine Club of Canada Trip Leader Guide, standalone web export (public)
   - `bow-valley/` — Mountains of the Bow Valley, web rebuild of the Storyline interaction (public)
 
 REDP, PHSA and IPAC are client work: show them with screenshots and video only, never the course files.
