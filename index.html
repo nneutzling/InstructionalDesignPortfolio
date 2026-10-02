@@ -664,11 +664,6 @@ class Component extends DCLogic {
     { name: 'SCORM', dot: '#6fb3d4' }, { name: 'LMS platforms', dot: '#ffb05a' },
   ];
 
-  testimonials = [
-    { quote: 'Nicole came onto a complex, multi-SME program midstream and immediately brought structure and momentum. The whole thing finally felt like one cohesive experience.', name: 'Program Lead', role: 'placeholder', mark: '#f1907f' },
-    { quote: 'When the tools couldn’t do what we needed, Nicole found a way: custom simulators, an app-based prototype, all on a tight timeline. Genuinely creative problem-solving.', name: 'Subject Matter Expert', role: 'placeholder', mark: '#ffb05a' },
-    { quote: 'Calm and adaptable when the project direction changed late. The redevelopment kept its quality and clarity, and the SMEs trusted the process throughout.', name: 'Project Manager', role: 'placeholder', mark: '#6fb3d4' },
-  ];
 
   navItems = [
     { label: 'Selected work', id: 'work' }, { label: 'Process', id: 'process' },
@@ -842,7 +837,7 @@ class Component extends DCLogic {
       menuOpen: this.state.menuOpen,
       hasSelected: !!sp,
       sel: sel || { title: '', context: '', outcome: '', tools: [], overview: '', challenge: '', role: '', approach: '', approachPoints: [], hasStatus: false, statusLabel: '', status: '', demonstrates: '', headBg: '#1b2542', headText: '#fff', headSub: '#fff', shots: [], links: [] },
-      projects, skills: this.skills, tools: this.tools, steps: this.steps, testimonials: this.testimonials, navItems,
+      projects, skills: this.skills, tools: this.tools, steps: this.steps, navItems,
       rootRef: this.rootRef,
       toggleMenu: this.toggleMenu, closeMenu: this.closeMenu, scrollTop: this.scrollTop,
       closeProject: this.closeProject, stop: (e) => e && e.stopPropagation && e.stopPropagation(),
