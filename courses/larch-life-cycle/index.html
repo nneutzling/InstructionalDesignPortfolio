@@ -63,6 +63,24 @@
   </header>
   <div id="dc-root">
 <div style="width: 100%; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: #F5F0E6; padding-bottom: 48px;">
+<!-- ===================== NARRATION CONTROLS ===================== -->
+  <sc-if value="{{audioActive}}" hint-placeholder-val="{{false}}">
+    <div role="region" aria-label="Narration controls" style="position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 10px; background: #2E4034; color: #F5F0E6; border-radius: 999px; padding: 8px 10px 8px 18px; box-shadow: 0 10px 28px rgba(0,0,0,0.28); font-size: 14px;">
+      <span aria-live="polite" style="font-weight: 600;">{{audioStatusText}}</span>
+      <button type="button" data-onclick="{{toggleAudio}}" style="font-weight: 700; font-size: 14px; color: #2E4034; background: #F5F0E6; border: none; border-radius: 999px; padding: 7px 16px;">{{audioToggleLabel}}</button>
+      <button type="button" data-onclick="{{stopAudio}}" aria-label="Stop narration" style="font-weight: 700; font-size: 14px; color: #F5F0E6; background: transparent; border: 1.5px solid rgba(250,246,237,0.6); border-radius: 999px; padding: 6px 16px;">Stop</button>
+    </div>
+  </sc-if>
+
+  <section class="ls-hero ls-hero--embedded">
+    <div class="note">Nest Notes · grades 3–5 · Sockeye Salmon unit · free preview</div>
+    <h1>Autumn Return</h1>
+    <p class="ls-sub">Sockeye salmon of the Columbia River Basin</p>
+    <p class="ls-lede">Every fall, sockeye salmon swim hundreds of kilometers up the Columbia River system to return to the very stream where they were born — and their journey feeds an entire valley.</p>
+    <button type="button" class="listen" data-onclick="{{listenIntro}}" aria-label="Listen to the introduction"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.8L13 19V5L7.8 9.5H4Z"/><path d="M16.3 9a4.5 4.5 0 0 1 0 6M18.8 6.5a8 8 0 0 1 0 11"/></svg><span>Listen to the introduction</span></button>
+    <nav class="ls-contents" aria-label="In this lesson"><a href="#basin">The basin</a><a href="#terms">Two words</a><a href="#watch">Watch the run</a><a href="#swim">Play: swim upstream</a><a href="#habitat">Where they spawn</a><a href="#home">Guide it home</a><a href="#cycle">Life cycle</a><a href="#ecosystem">Who benefits</a><a href="#space">Give them space</a><a href="#think">Think about it</a><a href="#educator">Educator note</a></nav>
+  </section>
+
   <!-- ===================== LIFE CYCLE WHEEL ===================== -->
   <div id="cycle" style="width: 100%; max-width: 1180px; box-sizing: border-box; padding: 64px 24px 8px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
     <h2 style="margin: 0; font-size: 30px; color: #2E4034; text-align: center;">Explore the life cycle</h2>
@@ -111,7 +129,7 @@
     </div>
   </div>
 
-</div>
+  </div>
 </div>
 </main>
 <script src="dc-runtime.js"></script>
@@ -121,6 +139,7 @@ class Component extends DCLogic {
     super(props);
     this.state = {
       selectedStage: 'spawning',
+      audioState: 'idle',
       itemStatus: {},
       selectedEcoId: null,
       showEducatorNote: false,
@@ -610,12 +629,16 @@ class Component extends DCLogic {
   }
 
   speak(text) {
+    this.stopAudio();
     try {
       if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
         utter.rate = 0.95;
+        utter.onend = () => { if (this.currentUtterance === utter) this.audioFinished(); };
+        utter.onerror = utter.onend;
+        this.currentUtterance = utter;
         window.speechSynthesis.speak(utter);
+        this.setState({ audioState: 'playing' });
       }
     } catch (e) {
       // Speech synthesis unavailable in this browser; fail silently.
@@ -623,12 +646,63 @@ class Component extends DCLogic {
   }
 
   playAudio(url) {
+    this.stopAudio();
     try {
       const audio = new Audio(url);
-      audio.play().catch(() => {});
+      audio.onended = () => { if (this.currentAudio === audio) this.audioFinished(); };
+      audio.onerror = audio.onended;
+      this.currentAudio = audio;
+      audio.play().catch(() => this.audioFinished());
+      this.setState({ audioState: 'playing' });
     } catch (e) {
       // Playback unavailable; fail silently.
     }
+  }
+
+  // Play a recorded clip; if the file is missing or can't play, read the text aloud instead.
+  narrate(url, fallbackText) {
+    this.stopAudio();
+    let fellBack = false;
+    const fallback = () => { if (fellBack) return; fellBack = true; if (this.currentAudio === audio) this.speak(fallbackText); };
+    let audio = null;
+    try {
+      audio = new Audio(url);
+      audio.onended = () => { if (this.currentAudio === audio) this.audioFinished(); };
+      audio.onerror = fallback;
+      this.currentAudio = audio;
+      audio.play().catch((err) => { if (!err || err.name !== 'NotAllowedError') fallback(); else this.audioFinished(); });
+      this.setState({ audioState: 'playing' });
+    } catch (e) {
+      this.speak(fallbackText);
+    }
+  }
+
+  // Narration controls shared by recorded clips and the browser voice.
+  audioFinished() {
+    this.currentAudio = null;
+    this.currentUtterance = null;
+    this.setState({ audioState: 'idle' });
+  }
+
+  pauseAudio() {
+    if (this.currentAudio) this.currentAudio.pause();
+    else if (this.currentUtterance && window.speechSynthesis) window.speechSynthesis.pause();
+    this.setState({ audioState: 'paused' });
+  }
+
+  resumeAudio() {
+    if (this.currentAudio) this.currentAudio.play().catch(() => {});
+    else if (this.currentUtterance && window.speechSynthesis) window.speechSynthesis.resume();
+    this.setState({ audioState: 'playing' });
+  }
+
+  stopAudio() {
+    if (this.currentAudio) { this.currentAudio.pause(); this.currentAudio = null; }
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      this.currentUtterance = null;
+      window.speechSynthesis.cancel();
+    }
+    if (this.state.audioState !== 'idle') this.setState({ audioState: 'idle' });
   }
 
   renderVals() {
@@ -654,10 +728,26 @@ class Component extends DCLogic {
       carcass: 'lesson-assets/stage-carcass.png'
     };
 
+    // Recorded narration: drop a file with this name into assets/ and it plays instead of the browser voice.
     const stageAudio = {
       egg: 'lesson-assets/audio-egg.mp4',
       alevin: 'lesson-assets/audio-alevin.mp4',
-      fry: 'lesson-assets/audio-fry.mp4'
+      fry: 'lesson-assets/audio-fry.mp4',
+      smolt: 'lesson-assets/audio-smolt.mp4',
+      ocean: 'lesson-assets/audio-ocean.mp4',
+      spawning: 'lesson-assets/audio-spawning.mp4',
+      carcass: 'lesson-assets/audio-carcass.mp4'
+    };
+    const ecoAudio = {
+      bear: 'lesson-assets/audio-eco-bear.mp4',
+      eagle: 'lesson-assets/audio-eco-eagle.mp4',
+      otter: 'lesson-assets/audio-eco-otter.mp4',
+      trout: 'lesson-assets/audio-eco-trout.mp4',
+      insects: 'lesson-assets/audio-eco-insects.mp4',
+      shrubs: 'lesson-assets/audio-eco-shrubs.mp4',
+      fungi: 'lesson-assets/audio-eco-fungi.mp4',
+      bicycle: 'lesson-assets/audio-eco-bicycle.mp4',
+      umbrella: 'lesson-assets/audio-eco-umbrella.mp4'
     };
 
     let currentStageRaw = stagesData[0];
@@ -701,17 +791,13 @@ class Component extends DCLogic {
       image: stageImages[currentStageRaw.id],
       number: stagesData.findIndex((s) => s.id === currentStageRaw.id) + 1,
       listen: () => {
-        const recorded = stageAudio[currentStageRaw.id];
-        if (recorded) {
-          this.playAudio(recorded);
-        } else {
-          this.speak(
-            currentStageRaw.label + '. ' + currentStageRaw.summary + ' ' +
-            'This stage lasts ' + currentStageRaw.duration + '. ' +
-            currentStageRaw.fact + ' ' +
-            'In the Columbia River Basin: ' + currentStageRaw.valley
-          );
-        }
+        this.narrate(
+          stageAudio[currentStageRaw.id],
+          currentStageRaw.label + '. ' + currentStageRaw.summary + ' ' +
+          'This stage lasts ' + currentStageRaw.duration + '. ' +
+          currentStageRaw.fact + ' ' +
+          'In the Columbia River Basin: ' + currentStageRaw.valley
+        );
       }
     };
 
@@ -765,7 +851,7 @@ class Component extends DCLogic {
           panelBg: isFound ? '#E4EEE1' : '#F6E7E2',
           panelBorder: isFound ? '#9FB894' : '#E3B49A',
           textColor: isFound ? '#375030' : '#8A4324',
-          listen: () => this.speak(raw.name + '. ' + raw.explain)
+          listen: () => this.narrate(ecoAudio[raw.id], raw.name + '. ' + raw.explain)
         };
       }
     }
@@ -774,8 +860,8 @@ class Component extends DCLogic {
 
     const introText = "Every fall, sockeye salmon swim hundreds of kilometers up the Columbia River system to return to the very stream where they were born, and their journey feeds an entire valley.";
 
-    const conservationAudio = null;
-    const termsAudio = null;
+    const conservationAudio = 'lesson-assets/audio-conservation.mp4';
+    const termsAudio = 'lesson-assets/audio-terms.mp4';
     const termsText = "Run. A run is a group of salmon migrating together from the ocean back to the river where they were born. Runs happen around the same time every year. For sockeye in the Columbia River Basin, that's autumn. " +
       "Spawning. Spawning is how salmon reproduce. A female digs a nest in the gravel called a redd, lays her eggs there, and a male fertilizes them. Spawning is the final stage of a sockeye's life. Most die within days to weeks afterward.";
     const doFlipped = !!this.state.flippedCards.do;
@@ -799,21 +885,14 @@ class Component extends DCLogic {
 
     return {
       accent: accent,
+      audioActive: this.state.audioState !== 'idle',
+      audioToggleLabel: this.state.audioState === 'paused' ? 'Resume' : 'Pause',
+      audioStatusText: this.state.audioState === 'paused' ? 'Narration paused' : 'Narration playing',
+      toggleAudio: () => (this.state.audioState === 'paused' ? this.resumeAudio() : this.pauseAudio()),
+      stopAudio: () => this.stopAudio(),
       listenIntro: () => this.playAudio('lesson-assets/audio-intro.mp4'),
-      listenTerms: () => {
-        if (termsAudio) {
-          this.playAudio(termsAudio);
-        } else {
-          this.speak(termsText);
-        }
-      },
-      listenConservation: () => {
-        if (conservationAudio) {
-          this.playAudio(conservationAudio);
-        } else {
-          this.speak(conservationText);
-        }
-      },
+      listenTerms: () => this.narrate(termsAudio, termsText),
+      listenConservation: () => this.narrate(conservationAudio, conservationText),
       gameScreen: this.state.gameScreen,
       gameShowStart: this.state.gameScreen === 'start',
       gameShowOver: this.state.gameScreen === 'over',

@@ -12,6 +12,8 @@ Static portfolio site, ready for GitHub Pages.
   - `larch-salmon-game/` — Swim Upstream game from the Larch & Lichen sockeye lesson (copied from the Larch & Lichen repo)
   - `larch-life-cycle/` — Sockeye life cycle explorer from the same lesson (copied from the Larch & Lichen repo)
 
+To refresh the two Larch pages after the lesson changes, run `tools/extract-larch.py` (usage at the top of the file) and copy any new `audio-*.mp4` into `courses/larch-life-cycle/lesson-assets/`.
+
 REDP, PHSA and IPAC are client work: show them with screenshots and video only, never the course files.
 
 ## Adding a course
