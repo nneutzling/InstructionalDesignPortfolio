@@ -11,6 +11,7 @@ Static portfolio site, ready for GitHub Pages.
   - `peak-pmp-sample/` — 8-question public sample of the Peak PMP baseline quiz (full banks stay private)
   - `larch-salmon-game/` — Swim Upstream game from the Larch & Lichen sockeye lesson (copied from the Larch & Lichen repo)
   - `larch-life-cycle/` — Sockeye life cycle explorer from the same lesson (copied from the Larch & Lichen repo)
+  - `ipac-refresher-game/` — IPAC Routine Practices scenario game (unpublished prototype, cleared for portfolio use)
 
 To refresh the two Larch pages after the lesson changes, run `tools/extract-larch.py` (usage at the top of the file) and copy any new `audio-*.mp4` into `courses/larch-life-cycle/lesson-assets/`.
 
