@@ -131,7 +131,7 @@
       <div data-reveal="" style="text-align:center;max-width:680px;margin:0 auto 60px;">
         <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:16px;">Selected work</div>
         <h2 style="margin:0 0 16px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#1b2542;font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-0.035em;">Case studies</h2>
-        <p style="margin:0;font-size:17px;line-height:1.55;color:#5b6a86;">A connected path through four recent projects. Follow the thread, then open any case study for the full story — overview, challenge, my role, approach, and what it demonstrates.</p>
+        <p style="margin:0;font-size:17px;line-height:1.55;color:#5b6a86;">A connected path through four recent projects. Follow the thread, then open any case study for the full story: overview, challenge, my role, approach, and what it demonstrates.</p>
       </div>
 
       <div data-route="" style="position:relative;max-width:880px;margin:0 auto;">
@@ -188,7 +188,7 @@
       <div data-reveal="" style="text-align:center;max-width:640px;margin:0 auto 60px;">
         <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#ffb05a;font-weight:700;margin-bottom:16px;">How I work</div>
         <h2 style="margin:0 0 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#ffffff;font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-0.035em;">My process</h2>
-        <p style="margin:0;font-size:17px;line-height:1.55;color:#aeb9d4;">A repeatable path from problem to proof — every project grounded in evidence and measured against outcomes.</p>
+        <p style="margin:0;font-size:17px;line-height:1.55;color:#aeb9d4;">A repeatable path from problem to proof, with every project grounded in evidence and measured against outcomes.</p>
       </div>
       <div style="position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;">
         <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
@@ -375,13 +375,13 @@ class Component extends DCLogic {
   rawProjects = [
     {
       slug: 'peak-pmp-prep', num: '01', accent: '#f1907f',
-      title: 'Peak PMP Prep — Intensive PMP Exam Preparation',
+      title: 'Peak PMP Prep: Intensive PMP Exam Preparation',
       context: 'Certification exam prep',
       outcome: '5-star Google rating · 600+ successful learners',
       tools: ['Articulate Rise', 'Articulate Storyline', 'JavaScript', 'Claude Code'],
-      overview: 'A 10-week intensive course supporting professionals preparing for the PMP certification exam, taken from concept to launch in roughly three months. I worked across a multidisciplinary team — subject matter expert, video production, and graphic designer — focused on designing the learning experience, structuring content, supporting development workflows, and building interactive learning and assessment components.',
+      overview: 'A 10-week intensive course supporting professionals preparing for the PMP certification exam, taken from concept to launch in roughly three months. I worked across a multidisciplinary team (subject matter expert, video production, and graphic designer), focusing on designing the learning experience, structuring content, supporting development workflows, and building interactive learning and assessment components.',
       challenge: 'Create a high-quality, comprehensive PMP prep experience on a compressed timeline, balancing depth, clarity, engagement, and realistic exam practice for adult learners juggling work and life. Learners needed exam-style questions, meaningful feedback, and familiarity with the pacing and structure of certification-style assessment.',
-      role: 'I organized content into a clear 10-week pathway, supported asset development, built eLearning components, and created assessment experiences aligned to PMP exam prep. I also implemented technology-enhanced solutions: using ChatGPT, Claude, and Claude Code, I customized JavaScript inside Storyline to build the original exam simulators — five simulators with more than 500 practice questions. That work grew into the custom assessment suite described in the next case study.',
+      role: 'I organized content into a clear 10-week pathway, supported asset development, built eLearning components, and created assessment experiences aligned to PMP exam prep. I also implemented technology-enhanced solutions: using ChatGPT, Claude, and Claude Code, I customized JavaScript inside Storyline to build the original exam simulators: five simulators with more than 500 practice questions. That work grew into the custom assessment suite described in the next case study.',
       approach: 'An intensive but structured experience, organized to support progression over 10 weeks with an emphasis on applied understanding, exam readiness, and learner confidence.',
       approachPoints: [
         'Coordinated with the SME to clarify priorities and organize complex content',
@@ -392,11 +392,11 @@ class Component extends DCLogic {
         'Iterated on structure and experience as the project evolved',
       ],
       statusLabel: 'Current status',
-      status: 'The course is in a redesign phase with a new launch planned for September — strengthening the learner experience, improving flow and usability, and building on lessons learned from the original rapid-development process.',
-      demonstrates: 'Leading instructional design in a fast-paced, high-stakes environment: rapid course development, SME collaboration, eLearning design, assessment strategy, AI-supported development, and creative problem-solving when standard tools don\u2019t fully meet learning needs.',
+      status: 'The course is in a redesign phase with a new launch planned for September. The redesign strengthens the learner experience, improving flow and usability, and building on lessons learned from the original rapid-development process.',
+      demonstrates: 'Leading instructional design in a fast-paced, high-stakes environment: rapid course development, SME collaboration, eLearning design, assessment strategy, AI-supported development, and creative problem-solving when standard tools don’t fully meet learning needs.',
       shots: [
-        { img: 'images/peak-storyboard-question.png', label: 'Storyboard example — question screen', pos: 'center' },
-        { img: 'images/peak-storyboard-brand.png', label: 'Storyboard example — brand & visual style', pos: 'center' },
+        { img: 'images/peak-storyboard-question.png', label: 'Storyboard example: question screen', pos: 'center' },
+        { img: 'images/peak-storyboard-brand.png', label: 'Storyboard example: brand & visual style', pos: 'center' },
       ],
       links: [
         { type: 'website', label: 'Visit the Peak PMP Prep website', url: 'https://peakpmprep.com/' },
@@ -405,7 +405,7 @@ class Component extends DCLogic {
     },
     {
       slug: 'peak-ai-assessments', num: '02', accent: '#34456b',
-      title: 'Peak PMP Prep — AI-Built Exam Simulators & Application Builder',
+      title: 'Peak PMP Prep: AI-Built Exam Simulators & Application Builder',
       context: 'AI-supported assessment development',
       outcome: 'Custom PMP & CAPM assessment suite plus an AI-feedback application tool',
       tools: ['Claude Design', 'Claude API', 'Claude Code', 'ChatGPT', 'JavaScript', 'SCORM 1.2'],
@@ -438,11 +438,11 @@ class Component extends DCLogic {
     },
     {
       slug: 'abspor-patient-oriented-research', num: '03', accent: '#9ed94d',
-      title: 'AbSPORU — Online Learning for Patient-Oriented Research',
+      title: 'AbSPORU: Online Learning for Patient-Oriented Research',
       context: 'Health research education · co-design',
       outcome: 'A suite of eLearning modules and patient-partner certificates co-designed with patients and researchers',
       tools: ['Co-design', 'SME collaboration', 'Online course design', 'Certificate design'],
-      overview: 'As an educational consultant with the Alberta SPOR SUPPORT Unit (AbSPORU), I co-designed online learning for health researchers and patient partners working in patient-oriented research (POR). I worked on AbSPORU\u2019s full suite of eLearning modules, including Equity, Diversity, Inclusion and Accessibility (EDIA) in POR, Patient Engagement in POR, Knowledge Translation in POR, and Introduction to Implementation Science, plus certificates that prepare new patient partners to participate effectively in research projects.',
+      overview: 'As an educational consultant with the Alberta SPOR SUPPORT Unit (AbSPORU), I co-designed online learning for health researchers and patient partners working in patient-oriented research (POR). I worked on AbSPORU’s full suite of eLearning modules, including Equity, Diversity, Inclusion and Accessibility (EDIA) in POR, Patient Engagement in POR, Knowledge Translation in POR, and Introduction to Implementation Science, plus certificates that prepare new patient partners to participate effectively in research projects.',
       challenge: 'Patient-oriented research depends on patients and researchers working as genuine partners, so the learning had to work for two very different audiences: researchers with deep subject expertise and patient partners bringing lived experience, often without a research background. The content needed to be accurate and credible for researchers while staying accessible, inclusive, and welcoming for patient partners.',
       role: 'I co-designed the courses and certificates alongside patient partners and health researcher subject matter experts. I shaped the learning design, structured the content for online delivery, and made sure each course reflected both research expertise and patient perspectives.',
       approach: 'Practise what the content teaches: design patient-oriented research education the patient-oriented way, with patient partners at the table from the start.',
@@ -468,13 +468,13 @@ class Component extends DCLogic {
     },
     {
       slug: 'larch-and-lichen', num: '04', accent: '#ffb05a',
-      title: 'Larch and Lichen — Place-Conscious Learning for the Columbia Valley',
-      context: 'Own venture · Grades 3–5',
+      title: 'Larch and Lichen: Place-Conscious Learning for the Columbia Valley',
+      context: 'Own venture · Grades 3 to 5',
       outcome: 'Educator resources and interactive online lessons rooted in local landscapes',
       tools: ['Claude Design', 'Claude Code', 'HTML & JavaScript', 'AI illustration & audio'],
       overview: 'Larch and Lichen is my own venture: place-conscious learning resources and online lessons for students in grades 3, 4, and 5 in the Columbia Valley. I use AI to create both educator resources and interactive online lessons that help young learners explore and understand the natural environment around them.',
       challenge: 'Most environmental education resources are generic. Students in the Columbia Valley learn best when lessons connect to the forests, wetlands, wildlife, and landscapes they actually live in. As a solo creator, I also needed a way to produce high-quality, age-appropriate lessons and matching teacher materials efficiently.',
-      role: 'I lead everything: learning design, content, and development. I use AI tools to accelerate production of educator guides and learner-facing interactive lessons, then review and refine everything for accuracy, local relevance, and the needs of grade 3–5 learners and their teachers.',
+      role: 'I lead everything: learning design, content, and development. I use AI tools to accelerate production of educator guides and learner-facing interactive lessons, then review and refine everything for accuracy, local relevance, and the needs of grade 3 to 5 learners and their teachers.',
       approach: 'Start from place: build learning around the local environment so students see their own valley in what they study, and give teachers ready-to-use resources that make that easy.',
       approachPoints: [
         'Designed place-conscious lessons tied to the natural environment of the Columbia Valley',
@@ -482,13 +482,13 @@ class Component extends DCLogic {
         'Built interactive lesson moments: a clickable salmon life-cycle explorer, a swim-upstream game, narrated audio, and a printable field journal',
         'Organized content into four units per season, each with an educator guide and short online lessons',
         'Used AI to speed up drafting and development, with careful human review for accuracy and age-appropriateness',
-        'Wrote for grade 3–5 reading levels and attention spans',
+        'Wrote for grade 3 to 5 reading levels and attention spans',
       ],
       statusLabel: 'Current status',
       status: 'Larch and Lichen is an active, growing project, with new lessons and educator resources in development.',
       demonstrates: 'Entrepreneurial instructional design, designing for young learners and their teachers, place-based learning, and practical use of AI to produce engaging resources as a solo creator.',
       shots: [
-        { img: 'images/larch-home.png', label: 'Larch & Lichen Learning — home page', pos: 'center top' },
+        { img: 'images/larch-home.png', label: 'Larch & Lichen Learning home page', pos: 'center top' },
         { img: 'images/larch-lifecycle.png', label: 'Interactive sockeye life-cycle explorer', pos: 'center' },
       ],
       links: [
@@ -497,14 +497,14 @@ class Component extends DCLogic {
     },
     {
       slug: 'real-estate-program', num: '05', accent: '#6fb3d4',
-      title: 'Real Estate Development Program — Professional Development Series',
+      title: 'Real Estate Development Program: Professional Development Series',
       context: 'Professional development series',
       outcome: 'Unified 9 subject-matter experts into one cohesive program',
       tools: ['Program design', 'SME collaboration', 'Video production', 'Program evaluation'],
-      overview: 'A professional development program for people already working in real estate, designed around the real estate development cycle — its key stages, roles, decisions, and considerations. I joined partway through, when about half of one course already existed, and brought structure, consistency, and instructional-design strategy to the remaining development.',
+      overview: 'A professional development program for people already working in real estate, designed around the real estate development cycle and its key stages, roles, decisions, and considerations. I joined partway through, when about half of one course already existed, and brought structure, consistency, and instructional-design strategy to the remaining development.',
       challenge: 'Multiple subject matter experts, a complex professional audience, and a program concept that needed to connect individual courses into one larger pathway. With nine SMEs involved, the work required careful consultation, content organization, relationship-building, and instructional-design guidance so the program felt cohesive rather than fragmented.',
-      role: 'I worked one-on-one with nine subject matter experts to design courses connected to different aspects of the development cycle — end-to-end, from consultation and content planning through design, development, and refinement. I collaborated with a film crew on video-based learning assets, translating expert knowledge into teachable content and ensuring media supported each course\u2019s goals. More recently, I completed an evaluation of the existing courses and developed recommendations for the program\u2019s future direction.',
-      approach: 'Create a coherent program experience while preserving each expert\u2019s unique expertise — connecting course content to the development cycle so learners can see how individual topics relate to the broader professional context.',
+      role: 'I worked one-on-one with nine subject matter experts to design courses connected to different aspects of the development cycle, end-to-end, from consultation and content planning through design, development, and refinement. I collaborated with a film crew on video-based learning assets, translating expert knowledge into teachable content and ensuring media supported each course’s goals. More recently, I completed an evaluation of the existing courses and developed recommendations for the program’s future direction.',
+      approach: 'Create a coherent program experience while preserving each expert’s unique expertise, connecting course content to the development cycle so learners can see how individual topics relate to the broader professional context.',
       approachPoints: [
         'Consulted with nine SMEs to clarify content, audience needs, and learning goals',
         'Designed course structures aligned to the overall program vision',
@@ -514,7 +514,7 @@ class Component extends DCLogic {
         'Evaluated completed courses and recommended future improvements',
       ],
       statusLabel: 'Outcome & direction',
-      status: 'The program evolved from an initial course concept into a broader professional-development series connected to the real estate development cycle. My recent evaluation provided strategic recommendations for the next stage — improving course consistency, learner navigation, instructional flow, and overall program direction.',
+      status: 'The program evolved from an initial course concept into a broader professional-development series connected to the real estate development cycle. My recent evaluation provided strategic recommendations for the next stage: improving course consistency, learner navigation, instructional flow, and overall program direction.',
       demonstrates: 'Entering an active project, building structure, collaborating with multiple experts, and moving a complex learning initiative forward: stakeholder consultation, program-level thinking, professional-development design, video-supported learning, and evaluation-informed improvement.',
       shots: [
         { img: 'images/redp-workbook.png', label: 'Project workbook', pos: 'center top' },
@@ -526,14 +526,14 @@ class Component extends DCLogic {
     },
     {
       slug: 'phsa-pathogens', num: '06', accent: '#34456b',
-      title: 'PHSA High Threat Pathogens — Provincial Health-Care Training',
+      title: 'PHSA High Threat Pathogens: Provincial Health-Care Training',
       context: 'Provincial health-care training',
       outcome: 'Province-wide course redeveloped mid-project without losing quality',
       tools: ['Articulate Storyline', 'Claude Code', 'Canva', 'Canva AI'],
-      overview: 'Design and development of a province-wide course on high threat pathogens, created to support consistent learning in a health-care context where accuracy, clarity, and usability were essential. The work required close collaboration with subject matter experts to translate complex, high-stakes health information into a structured eLearning experience — spanning instructional design, storyboarding, style-guide development, and build in Articulate Storyline.',
-      challenge: 'The content was complex, technical, and highly sensitive to accuracy — and had to be clear, consistent, and accessible for a broad health-care audience. A major challenge came when the direction changed partway through: after initial storyboards and style guides were developed, the course needed to be redeveloped to align with the updated approach, demanding adaptability and rapid problem-solving while maintaining design quality.',
-      role: 'I worked with subject matter experts to design and develop the course — organizing complex content, developing storyboards, creating style guides, and building the eLearning experience. When the direction shifted, I supported the redevelopment, adapting the design and build to the new requirements. I used Storyline for development and incorporated Claude Code, Canva, and Canva AI to support design, customization, and production efficiencies.',
-      approach: 'Clarity, consistency, and learner usability — supporting accurate understanding of high threat pathogens while avoiding unnecessary cognitive overload.',
+      overview: 'Design and development of a province-wide course on high threat pathogens, created to support consistent learning in a health-care context where accuracy, clarity, and usability were essential. The work required close collaboration with subject matter experts to translate complex, high-stakes health information into a structured eLearning experience, spanning instructional design, storyboarding, style-guide development, and build in Articulate Storyline.',
+      challenge: 'The content was complex, technical, and highly sensitive to accuracy, and it had to be clear, consistent, and accessible for a broad health-care audience. A major challenge came when the direction changed partway through: after initial storyboards and style guides were developed, the course needed to be redeveloped to align with the updated approach, demanding adaptability and rapid problem-solving while maintaining design quality.',
+      role: 'I worked with subject matter experts to design and develop the course, organizing complex content, developing storyboards, creating style guides, and building the eLearning experience. When the direction shifted, I supported the redevelopment, adapting the design and build to the new requirements. I used Storyline for development and incorporated Claude Code, Canva, and Canva AI to support design, customization, and production efficiencies.',
+      approach: 'Clarity, consistency, and learner usability, supporting accurate understanding of high threat pathogens while avoiding unnecessary cognitive overload.',
       approachPoints: [
         'Collaborated with SMEs to confirm content accuracy and learning priorities',
         'Translated technical health-care information into clear learning sequences',
@@ -555,14 +555,14 @@ class Component extends DCLogic {
     },
     {
       slug: 'ipac-refresher', num: '07', accent: '#9ed94d',
-      title: 'IPAC for Health-Care Workers — 30-Minute Refresher',
+      title: 'IPAC for Health-Care Workers: 30-Minute Refresher',
       context: 'Provincial health-care training',
       outcome: '90-minute course condensed into a focused 30-minute refresher',
       tools: ['Articulate Storyline', 'SME collaboration', 'Storyboarding', 'Scenario design'],
-      overview: 'A refresher course on Infection Prevention and Control (IPAC) for provincial health-care workers, created by condensing an existing 90-minute foundational course into a focused 30-minute refresh. The goal was to reinforce critical IPAC practices for staff who had already completed the full training — keeping the content accurate and practice-focused while removing the cognitive load of re-teaching everything from scratch.',
-      challenge: 'The original 90-minute course covered the topic comprehensively, but a full retake was too long for a refresher audience. The challenge was deciding what to keep, what to compress, and what to cut — without losing accuracy or the practices that matter most at the point of care. That required a clear, defensible method for prioritizing content and a way to guide SMEs through condensing decisions rather than defaulting to "keep everything."',
+      overview: 'A refresher course on Infection Prevention and Control (IPAC) for provincial health-care workers, created by condensing an existing 90-minute foundational course into a focused 30-minute refresh. The goal was to reinforce critical IPAC practices for staff who had already completed the full training, keeping the content accurate and practice-focused while removing the cognitive load of re-teaching everything from scratch.',
+      challenge: 'The original 90-minute course covered the topic comprehensively, but a full retake was too long for a refresher audience. The challenge was deciding what to keep, what to compress, and what to cut, without losing accuracy or the practices that matter most at the point of care. That required a clear, defensible method for prioritizing content and a way to guide SMEs through condensing decisions rather than defaulting to "keep everything."',
       role: 'I led the condensing effort end-to-end: analyzing the original course against refresher learning goals, building a storyboard for the streamlined 30-minute flow, and designing a sample scenario interaction to keep the refresher active rather than passive. I also created a guidance document to help SMEs make consistent decisions about what content to retain, compress, or remove.',
-      approach: 'Refresh, don\u2019t re-teach — prioritize the highest-risk, highest-frequency IPAC practices and deliver them in an active, scenario-driven format that respects the learner\u2019s existing knowledge.',
+      approach: 'Refresh, don’t re-teach: prioritize the highest-risk, highest-frequency IPAC practices and deliver them in an active, scenario-driven format that respects the learner’s existing knowledge.',
       approachPoints: [
         'Analyzed the original 90-minute course against refresher learning objectives',
         'Built a prioritization method to decide what to keep, compress, or cut',
@@ -585,13 +585,13 @@ class Component extends DCLogic {
     },
     {
       slug: 'acc-trip-leader', num: '08', accent: '#ffb05a',
-      title: 'Alpine Club of Canada — Trip Leader Guide',
+      title: 'Alpine Club of Canada: Trip Leader Guide',
       context: 'Volunteer outdoor leadership training',
       outcome: 'Static handbook transformed into scenario-based eLearning',
       tools: ['Articulate Rise', 'Articulate AI', 'Rise AI Voice', 'Canva AI', 'Gemini'],
       overview: 'An eLearning course designed to support volunteer trip leaders in understanding their role, responsibilities, and decision-making considerations when leading club activities. The course was developed from the updated Trip Leader Guide and the previous Trip Leader Handbook, transforming existing written resources into a more accessible, engaging, and scenario-based learning experience. The goal is a practical resource that helps trip leaders apply guidance in realistic situations while supporting consistency, confidence, and safety-focused decision-making.',
-      challenge: 'The original materials contained valuable information, but they needed to be translated into a more interactive and learner-friendly format. Because trip leadership involves judgment, communication, planning, group management, and risk awareness, the course needed to move beyond simply presenting information — it had to help learners think through real-world situations and understand how the guidance applies in practice. A second challenge was creating a polished course efficiently within a volunteer context, using available tools strategically to support rapid development, visual design, and scenario creation.',
-      role: 'I designed and developed the course using the updated Trip Leader Guide and the previous Trip Leader Handbook as the primary source materials. I used Articulate AI to help generate the initial course structure and learning content from the existing documents, then refined the experience to improve clarity, flow, and relevance for adult learners. I also used Canva AI and Gemini to create custom graphics, and brought scenario-based learning into the course with Articulate Rise AI Voice Overs — realistic scenarios that help learners consider how they might respond to common trip leadership situations.',
+      challenge: 'The original materials contained valuable information, but they needed to be translated into a more interactive and learner-friendly format. Because trip leadership involves judgment, communication, planning, group management, and risk awareness, the course needed to move beyond simply presenting information. It had to help learners think through real-world situations and understand how the guidance applies in practice. A second challenge was creating a polished course efficiently within a volunteer context, using available tools strategically to support rapid development, visual design, and scenario creation.',
+      role: 'I designed and developed the course using the updated Trip Leader Guide and the previous Trip Leader Handbook as the primary source materials. I used Articulate AI to help generate the initial course structure and learning content from the existing documents, then refined the experience to improve clarity, flow, and relevance for adult learners. I also used Canva AI and Gemini to create custom graphics, and brought scenario-based learning into the course with Articulate Rise AI Voice Overs: realistic scenarios that help learners consider how they might respond to common trip leadership situations.',
       approach: 'Make trip leadership guidance easier to understand, navigate, and apply. Rather than simply converting the handbook into an online format, the learning experience focuses on practical application and decision-making.',
       approachPoints: [
         'Reviewed and synthesized content from the updated Trip Leader Guide and previous Handbook',
@@ -604,7 +604,7 @@ class Component extends DCLogic {
       ],
       statusLabel: 'Current status',
       status: 'The course is currently in progress and still receiving feedback. Revisions are being made to ensure the final learning experience is accurate, useful, and aligned with the needs of trip leaders and the organization.',
-      demonstrates: 'Thoughtful use of AI-supported tools within the instructional design process: transforming static documents into interactive learning, designing for volunteer and adult learners, developing scenario-based training, creating visuals with generative AI, and refining content through feedback and iteration — on subject matter where judgment, communication, and safety are central.',
+      demonstrates: 'Thoughtful use of AI-supported tools within the instructional design process: transforming static documents into interactive learning, designing for volunteer and adult learners, developing scenario-based training, creating visuals with generative AI, and refining content through feedback and iteration, on subject matter where judgment, communication, and safety are central.',
       shots: [
         { img: 'images/acc-course-title.png', label: 'Course visual', pos: 'center top' },
         { img: 'images/acc-course-scenario.png', label: 'Course visual', pos: 'center top' },
@@ -615,14 +615,14 @@ class Component extends DCLogic {
     },
     {
       slug: 'bow-valley-mountains', num: '09', accent: '#6fb3d4',
-      title: 'Mountains of the Bow Valley — Storyline Interaction, Rebuilt for the Web',
+      title: 'Mountains of the Bow Valley: Storyline Interaction, Rebuilt for the Web',
       context: 'Self-directed interaction challenge',
       outcome: 'Custom dial- and slider-driven interactions with AI-generated visuals and audio',
       tools: ['Articulate Storyline', 'HTML & JavaScript', 'Claude Code', 'AI image generation', 'AI audio generation'],
-      overview: 'A self-directed Storyline challenge built around the peaks of the Bow Valley, created to push my command of Storyline\u2019s interactive controls. The piece uses dials and sliders as the core navigation and discovery mechanic, letting learners actively explore the mountains rather than passively click through screens. I paired the interaction work with AI-generated mountain imagery and AI-created audio to produce a fully realized, atmospheric experience on my own.',
-      challenge: 'Dials and sliders are some of Storyline\u2019s most powerful but least forgiving controls — they require careful state management, variable logic, and triggers to feel smooth and intuitive. The challenge was to make these inputs drive meaningful, responsive content while keeping the experience approachable, and to source cohesive visuals and audio for a personal project without a media budget or production team.',
-      role: 'I designed and built the entire piece solo — wiring dials and sliders to variables and triggers so learner input changes what is shown and heard, and tuning the interaction states until they felt natural. I used AI image generation to create the Bow Valley mountain visuals and AI tools to generate the accompanying audio, then assembled and refined everything in Storyline.',
-      approach: 'Treat interaction as the content — let dials and sliders turn exploration into the learning experience, supported by atmosphere (visuals and sound) that makes the place feel real.',
+      overview: 'A self-directed Storyline challenge built around the peaks of the Bow Valley, created to push my command of Storyline’s interactive controls. The piece uses dials and sliders as the core navigation and discovery mechanic, letting learners actively explore the mountains rather than passively click through screens. I paired the interaction work with AI-generated mountain imagery and AI-created audio to produce a fully realized, atmospheric experience on my own.',
+      challenge: 'Dials and sliders are some of Storyline’s most powerful but least forgiving controls. They require careful state management, variable logic, and triggers to feel smooth and intuitive. The challenge was to make these inputs drive meaningful, responsive content while keeping the experience approachable, and to source cohesive visuals and audio for a personal project without a media budget or production team.',
+      role: 'I designed and built the entire piece solo, wiring dials and sliders to variables and triggers so learner input changes what is shown and heard, and tuning the interaction states until they felt natural. I used AI image generation to create the Bow Valley mountain visuals and AI tools to generate the accompanying audio, then assembled and refined everything in Storyline.',
+      approach: 'Treat interaction as the content: let dials and sliders turn exploration into the learning experience, supported by atmosphere (visuals and sound) that makes the place feel real.',
       approachPoints: [
         'Mapped dial and slider states to Storyline variables and triggers',
         'Rebuilt the interaction in HTML and JavaScript so it runs anywhere: drag or swipe to spin the world, snap to each mountain, with keyboard and screen-reader support',
@@ -633,11 +633,11 @@ class Component extends DCLogic {
         'Assembled, tested, and refined the full experience in Storyline',
       ],
       statusLabel: 'Status & next steps',
-      status: 'Originally built in Storyline, then rebuilt as a standalone web interaction from the same artwork and audio so it no longer depends on an authoring-tool licence. It now works on desktop and mobile. Next, I\u2019d like to add more information about each mountain and develop it into a full interactive experience.',
+      status: 'Originally built in Storyline, then rebuilt as a standalone web interaction from the same artwork and audio so it no longer depends on an authoring-tool licence. It now works on desktop and mobile. Next, I’d like to add more information about each mountain and develop it into a full interactive experience.',
       demonstrates: 'Advanced Storyline interactivity and creative resourcefulness: dial- and slider-driven mechanics, variable and trigger logic, and thoughtful use of AI to generate visuals and audio for a polished, self-produced learning experience.',
       shots: [
-        { img: 'images/bow-yamnuska.png', label: 'Îyâ Mnathka — Mount Yamnuska', pos: 'center' },
-        { img: 'images/bow-castle.png', label: 'Miistukskoowa — Castle Mountain', pos: 'center' },
+        { img: 'images/bow-yamnuska.png', label: 'Îyâ Mnathka, Mount Yamnuska', pos: 'center' },
+        { img: 'images/bow-castle.png', label: 'Miistukskoowa, Castle Mountain', pos: 'center' },
       ],
       links: [
         { type: 'live', label: 'Try the interaction', url: 'courses/bow-valley/index.html' },
@@ -648,7 +648,7 @@ class Component extends DCLogic {
   steps = [
     { tag: '01', title: 'Analyze', desc: 'Needs analysis, SME consultation, and action mapping to find the real gap.', color: '#9ed94d' },
     { tag: '02', title: 'Design', desc: 'Learning objectives, storyboards, style guides, and the ID model that fits.', color: '#6fb3d4' },
-    { tag: '03', title: 'Develop', desc: 'Build interactions, simulators, and assessments — customizing tools when needed.', color: '#ffb05a' },
+    { tag: '03', title: 'Develop', desc: 'Build interactions, simulators, and assessments, customizing tools when needed.', color: '#ffb05a' },
     { tag: '04', title: 'Implement', desc: 'Deploy, pilot with real learners, and iterate on friction.', color: '#f1907f' },
     { tag: '05', title: 'Evaluate', desc: 'Measure outcomes, gather feedback, and recommend improvements.', color: '#f1907f' },
   ];
@@ -666,7 +666,7 @@ class Component extends DCLogic {
 
   testimonials = [
     { quote: 'Nicole came onto a complex, multi-SME program midstream and immediately brought structure and momentum. The whole thing finally felt like one cohesive experience.', name: 'Program Lead', role: 'placeholder', mark: '#f1907f' },
-    { quote: 'When the tools couldn\u2019t do what we needed, Nicole found a way — custom simulators, an app-based prototype, all on a tight timeline. Genuinely creative problem-solving.', name: 'Subject Matter Expert', role: 'placeholder', mark: '#ffb05a' },
+    { quote: 'When the tools couldn’t do what we needed, Nicole found a way: custom simulators, an app-based prototype, all on a tight timeline. Genuinely creative problem-solving.', name: 'Subject Matter Expert', role: 'placeholder', mark: '#ffb05a' },
     { quote: 'Calm and adaptable when the project direction changed late. The redevelopment kept its quality and clarity, and the SMEs trusted the process throughout.', name: 'Project Manager', role: 'placeholder', mark: '#6fb3d4' },
   ];
 
