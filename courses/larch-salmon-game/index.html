@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swim Upstream · Larch &amp; Lichen Learning</title>
+<meta name="description" content="Swim Upstream: a sockeye salmon game from the Larch &amp; Lichen Learning Autumn Return lesson for grades 3–5.">
+<meta name="theme-color" content="#2E4034">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2034%2040%22%3E%3Cpath%20d%3D%22M17%2039V7%22%20stroke%3D%22%23C5852A%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3Cg%20stroke%3D%22%23C5852A%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M17%2011L9%206M17%2011L25%206M17%2018L7%2014M17%2018L27%2014M17%2025L9%2022M17%2025L25%2022M17%2032L11%2030M17%2032L23%2030%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Mulish:wght@400;500;600;700&family=Shantell+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<style>
+  
+  
+  
+  
+  button { font-family: inherit; cursor: pointer; }
+  .stage-btn:focus-visible, .item-btn:focus-visible, .pill-btn:focus-visible { outline: 3px solid #2E4034; outline-offset: 2px; }
+  .eco-hotspot { border: 3px solid transparent; background: transparent; border-radius: 50%; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+  .eco-hotspot:hover { border-color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.16); }
+  .eco-hotspot:focus-visible { outline: 3px solid #2E4034; outline-offset: 2px; }
+  .eco-hotspot.is-found { border-color: #5B8A4F; background: rgba(91,138,79,0.22); box-shadow: 0 0 0 4px rgba(91,138,79,0.20); }
+  .eco-hotspot.is-found:hover { border-color: #4C7541; background: rgba(91,138,79,0.28); }
+  .eco-hotspot.is-wrong { border-color: #C0553A; background: rgba(192,85,58,0.22); box-shadow: 0 0 0 4px rgba(192,85,58,0.18); }
+  .eco-hotspot.is-wrong:hover { border-color: #A8492F; background: rgba(192,85,58,0.28); }
+  .flip-card { perspective: 1400px; }
+  .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0.15, 0.2, 1); transform-style: preserve-3d; }
+  .flip-card-inner.is-flipped { transform: rotateY(180deg); }
+  .flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-sizing: border-box; border-radius: 16px; }
+  .flip-face-back { transform: rotateY(180deg); }
+  @keyframes swim-upstream {
+    0%   { transform: translateX(860px) translateY(6px) rotate(-3deg); }
+    22%  { transform: translateX(600px) translateY(-14px) rotate(3deg); }
+    45%  { transform: translateX(390px) translateY(4px) rotate(-2deg); }
+    68%  { transform: translateX(190px) translateY(-16px) rotate(3deg); }
+    100% { transform: translateX(30px) translateY(2px) rotate(-3deg); }
+  }
+  @keyframes leaf-drift {
+    0%   { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0.9; }
+    100% { transform: translateY(120px) translateX(24px) rotate(60deg); opacity: 0; }
+  }
+  .salmon-swimmer { animation: swim-upstream 7s ease-in-out infinite alternate; }
+  .salmon-swimmer-2 { animation-duration: 6s; animation-delay: -2.1s; }
+  .salmon-swimmer-3 { animation-duration: 8.2s; animation-delay: -4.6s; }
+  .leaf1 { animation: leaf-drift 5.5s ease-in infinite; animation-delay: 0s; }
+  .leaf2 { animation: leaf-drift 6.5s ease-in infinite; animation-delay: 1.8s; }
+  .leaf3 { animation: leaf-drift 4.8s ease-in infinite; animation-delay: 3.2s; }
+
+  .salmon-lesson { font-family: var(--sans); color: var(--ink); }
+  .salmon-lesson h2, .salmon-lesson h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em; text-wrap: balance; }
+  .salmon-lesson .display { font-family: var(--serif); }
+  .salmon-lesson button { font-family: inherit; cursor: pointer; }
+</style>
+<main class="lesson salmon-lesson" style="--accent:#C5852A;--accent-deep:#8a5a14;--accent-rgb:197,133,42;">
+  <header class="ls-head wrap">
+    <span class="wordmark" style="font-family: var(--serif); font-size: 20px; color: #2E4034;">Larch &amp; Lichen Learning</span>
+    <span style="font-size: 13px; color: #6A5743;">From the <em>Autumn Return</em> lesson · grades 3–5</span>
+  </header>
+  <div id="dc-root">
+<div style="width: 100%; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: #F5F0E6; padding-bottom: 48px;">
+  <!-- ===================== SWIM UPSTREAM GAME ===================== -->
+  <div id="swim" style="width: 100%; max-width: 1180px; box-sizing: border-box; padding: 48px 24px 8px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+    <h2 style="margin: 0; font-size: 30px; color: #2E4034;">Play: swim upstream</h2>
+    <p style="margin: 0; max-width: 620px; text-align: center; font-size: 16px; color: #6A5743;">Dodge bears and driftwood, shelter behind rocks to catch your breath, and swim into the stream mouth that matches your target — don't dawdle, or the current sweeps you back.</p>
+
+    <div style="display: flex; align-items: center; justify-content: center; gap: 18px; width: 100%; max-width: 420px; margin: 14px 0 4px; background: #2E4034; border-radius: 14px; padding: 10px 18px; box-sizing: border-box;">
+      <div style="text-align: center;">
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: #A9B3A2;">LIVES</div>
+        <div style="display: flex; gap: 4px; margin-top: 2px;">
+          <sc-for list="{{gameLifePips}}" as="pip" hint-placeholder-count="3">
+            <div style="width: 14px; height: 14px; border-radius: 50%; background: {{pip.color}};"></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: #A9B3A2;">SCORE</div>
+        <div style="font-size: 17px; font-weight: 700; color: {{accent}};">{{gameScore}}</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: #A9B3A2;">LEVEL</div>
+        <div style="font-size: 17px; font-weight: 700; color: {{accent}};">{{gameLevel}}</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: #A9B3A2;">TARGET</div>
+        <div style="display: flex; gap: 4px; margin-top: 2px;">
+          <sc-for list="{{gameTargets}}" as="t" hint-placeholder-count="3">
+            <div style="width: 14px; height: 14px; border-radius: 50%; background: {{t.color}}; box-shadow: {{t.ring}};"></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div tabindex="0" data-onkeydown="{{onGameKeyDown}}" aria-label="Swim upstream game. Use arrow keys or the buttons below to move." style="position: relative; width: min(94vw, 420px); aspect-ratio: 9 / 12; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 4px solid #2E4034; outline: none;">
+      <canvas id="upstreamGameCanvas" width="396" height="528" style="display: block; width: 100%; height: 100%;"></canvas>
+
+      <sc-if value="{{gameShowStart}}" hint-placeholder-val="{{true}}">
+        <div style="position: absolute; inset: 0; background: rgba(34,48,39,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; gap: 10px;">
+          <h3 style="margin: 0; color: #F4EEDD; font-size: 24px;">Swim Upstream</h3>
+          <p style="margin: 0; color: #D8CFB3; font-size: 13px; max-width: 280px; line-height: 1.5;">Arrow keys, WASD, or the buttons below to move. Keep swimming — the current drags you back if you idle too long. Dodge bears and driftwood, and reach the stream mouth matching the target dot in the HUD.</p>
+          <button type="button" data-onclick="{{startGame}}" style="font-weight: 700; font-size: 15px; color: #2E4034; background: #C3D65A; border: none; border-radius: 999px; padding: 10px 26px; margin-top: 6px;">Start swimming</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{gameShowOver}}" hint-placeholder-val="{{false}}">
+        <div style="position: absolute; inset: 0; background: rgba(34,48,39,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; gap: 8px;">
+          <h3 style="margin: 0; color: #F4EEDD; font-size: 22px;">Caught by the current</h3>
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: #D8CFB3;">FINAL SCORE</div>
+          <div style="font-size: 38px; font-weight: 700; color: #C3D65A;">{{gameFinalScore}}</div>
+          <div style="font-size: 13px; color: #D8CFB3;">Best this session: {{gameBest}}</div>
+          <button type="button" data-onclick="{{startGame}}" style="font-weight: 700; font-size: 15px; color: #2E4034; background: #C3D65A; border: none; border-radius: 999px; padding: 10px 26px; margin-top: 6px;">Try again</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 52px); gap: 6px; margin-top: 14px;">
+      <div></div>
+      <button type="button" data-onclick="{{gameMoveUp}}" aria-label="Move up" style="grid-column: 2; grid-row: 1; background: #F5F0E6; border: 1px solid #DED5C2; border-radius: 10px; color: #2E4034; font-size: 20px;">▲</button>
+      <div></div>
+      <button type="button" data-onclick="{{gameMoveLeft}}" aria-label="Move left" style="grid-column: 1; grid-row: 2; background: #F5F0E6; border: 1px solid #DED5C2; border-radius: 10px; color: #2E4034; font-size: 20px;">◀</button>
+      <button type="button" data-onclick="{{gameMoveDown}}" aria-label="Move down" style="grid-column: 2; grid-row: 2; background: #F5F0E6; border: 1px solid #DED5C2; border-radius: 10px; color: #2E4034; font-size: 20px;">▼</button>
+      <button type="button" data-onclick="{{gameMoveRight}}" aria-label="Move right" style="grid-column: 3; grid-row: 2; background: #F5F0E6; border: 1px solid #DED5C2; border-radius: 10px; color: #2E4034; font-size: 20px;">▶</button>
+    </div>
+
+    <div style="display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; justify-content: center; font-size: 12px; color: #6A5743;">
+      <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 10px; height: 10px; border-radius: 3px; background: #6E4E2F; display: inline-block;"></span> driftwood</span>
+      <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 10px; height: 10px; border-radius: 3px; background: #8B5E3C; display: inline-block;"></span> bear</span>
+      <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 10px; height: 10px; border-radius: 3px; background: #8C8C8C; display: inline-block;"></span> rock (shelter, blocks path)</span>
+    </div>
+  </div>
+
+</div>
+</div>
+</main>
+<script src="dc-runtime.js"></script>
+<script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedStage: 'spawning',
+      itemStatus: {},
+      selectedEcoId: null,
+      showEducatorNote: false,
+      flippedCards: {},
+      dragProgress: 0,
+      dragging: false,
+      gameScreen: 'start',
+      gameScore: 0,
+      gameLevel: 1,
+      gameLives: 3,
+      gameFinalScore: 0,
+      gameBest: 0
+    };
+
+    // ---- Swim Upstream mini-game: constants ----
+    this.G_COLS = 9;
+    this.G_ROWS = 12;
+    this.G_CELL = 44;
+    this.G_W = this.G_COLS * this.G_CELL;
+    this.G_H = this.G_ROWS * this.G_CELL;
+    this.G_START_ROW = this.G_ROWS - 1;
+    this.G_ENTRANCES = [1, 4, 7];
+    this.G_ICON_COLORS = ['#F2B705', '#3E8E5A', '#4FB0C6'];
+
+    // Engine state lives outside this.state so per-frame animation never
+    // triggers a re-render; only discrete events (score, life, level,
+    // game over) call this.setState.
+    this.engine = null;
+    this.gCanvas = null;
+    this.gCtx = null;
+    this.gLastT = null;
+    this.gLoopStarted = false;
+
+    // Waypoints tracing the river from the mouth (t=0) to the spawning
+    // grounds near the mountains (t=1), as percentages of the image box.
+    this.pathPoints = [
+      { x: 69, y: 99 },
+      { x: 60, y: 88 },
+      { x: 56, y: 78 },
+      { x: 52, y: 68 },
+      { x: 47, y: 58 },
+      { x: 43, y: 50 },
+      { x: 46, y: 42 },
+      { x: 40, y: 33 },
+      { x: 34, y: 30 },
+      { x: 29, y: 28 },
+      { x: 21, y: 27 },
+      { x: 16, y: 26 }
+    ];
+    this.segLengths = [];
+    this.cumLengths = [0];
+    for (let i = 1; i < this.pathPoints.length; i++) {
+      const dx = this.pathPoints[i].x - this.pathPoints[i - 1].x;
+      const dy = this.pathPoints[i].y - this.pathPoints[i - 1].y;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      this.segLengths.push(len);
+      this.cumLengths.push(this.cumLengths[this.cumLengths.length - 1] + len);
+    }
+    this.totalLength = this.cumLengths[this.cumLengths.length - 1];
+  }
+
+  getPointAtT(t) {
+    const clamped = Math.max(0, Math.min(1, t));
+    const target = clamped * this.totalLength;
+    for (let i = 0; i < this.segLengths.length; i++) {
+      const segEnd = this.cumLengths[i + 1];
+      if (target <= segEnd || i === this.segLengths.length - 1) {
+        const segStart = this.cumLengths[i];
+        const segLen = this.segLengths[i] || 1;
+        const localT = Math.max(0, Math.min(1, (target - segStart) / segLen));
+        const p0 = this.pathPoints[i];
+        const p1 = this.pathPoints[i + 1];
+        return { x: p0.x + (p1.x - p0.x) * localT, y: p0.y + (p1.y - p0.y) * localT };
+      }
+    }
+    return this.pathPoints[this.pathPoints.length - 1];
+  }
+
+  projectToPath(x, y) {
+    let bestDistSq = Infinity;
+    let bestT = this.state.dragProgress;
+    for (let i = 0; i < this.pathPoints.length - 1; i++) {
+      const p0 = this.pathPoints[i];
+      const p1 = this.pathPoints[i + 1];
+      const dx = p1.x - p0.x;
+      const dy = p1.y - p0.y;
+      const lenSq = dx * dx + dy * dy || 1;
+      let localT = ((x - p0.x) * dx + (y - p0.y) * dy) / lenSq;
+      localT = Math.max(0, Math.min(1, localT));
+      const px = p0.x + dx * localT;
+      const py = p0.y + dy * localT;
+      const distSq = (x - px) * (x - px) + (y - py) * (y - py);
+      if (distSq < bestDistSq) {
+        const segLen = this.segLengths[i] || 1;
+        bestDistSq = distSq;
+        bestT = (this.cumLengths[i] + segLen * localT) / this.totalLength;
+      }
+    }
+    return bestT;
+  }
+
+  startDrag(e) {
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Pointer capture unavailable; dragging still works via bubbled events.
+    }
+    this.setState({ dragging: true });
+  }
+
+  onDragMove(e) {
+    if (!this.state.dragging) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const t = this.projectToPath(xPct, yPct);
+    this.setState({ dragProgress: t });
+  }
+
+  stopDrag() {
+    this.setState({ dragging: false });
+  }
+
+  resetDrag() {
+    this.setState({ dragProgress: 0, dragging: false });
+  }
+
+  nudgeDrag(delta) {
+    const next = Math.max(0, Math.min(1, this.state.dragProgress + delta));
+    this.setState({ dragProgress: next });
+  }
+
+  handleDragKeyDown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.nudgeDrag(0.04);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      this.nudgeDrag(-0.04);
+    }
+  }
+
+  toggleFlip(key) {
+    const next = Object.assign({}, this.state.flippedCards);
+    next[key] = !next[key];
+    this.setState({ flippedCards: next });
+  }
+
+  // ================= Swim Upstream mini-game =================
+
+  componentDidMount() {
+    const canvas = document.getElementById('upstreamGameCanvas');
+    if (!canvas) return;
+    this.gCanvas = canvas;
+    this.gCtx = canvas.getContext('2d');
+    if (!this.engine) this.buildEngine(1);
+    if (!this.gLoopStarted) {
+      this.gLoopStarted = true;
+      requestAnimationFrame((t) => this.gameLoop(t));
+    }
+  }
+
+  randInt(n) {
+    return Math.floor(Math.random() * n);
+  }
+
+  buildEngine(level) {
+    const lanes = {};
+    const pattern = ['bear', 'log', 'rock', 'log', 'bear', 'rock', 'log', 'bear', 'log', 'rock'];
+    for (let row = 1; row <= this.G_ROWS - 2; row++) {
+      const type = pattern[(row - 1) % pattern.length];
+      const dir = (row % 2 === 0) ? 1 : -1;
+      const lane = { type: type, dir: dir, hazards: [], rocks: [] };
+      if (type === 'rock') {
+        const rockCount = 2 + (level > 3 ? 1 : 0);
+        const used = {};
+        let count = 0;
+        let guard = 0;
+        while (count < rockCount && guard < 50) {
+          guard++;
+          const c = this.randInt(this.G_COLS);
+          if (!used[c]) { used[c] = true; count++; }
+        }
+        lane.rocks = Object.keys(used).map((k) => parseInt(k, 10));
+      } else {
+        const hazCount = Math.min(4, 2 + Math.floor(level / 3) + (type === 'bear' ? 1 : 0));
+        const speedBase = (26 + level * 5) * (type === 'bear' ? 1.15 : 1);
+        const w = (type === 'bear') ? this.G_CELL * 0.8 : this.G_CELL * 1.3;
+        const spacing = this.G_W / hazCount;
+        for (let k = 0; k < hazCount; k++) {
+          lane.hazards.push({
+            x: k * spacing + Math.random() * (spacing * 0.4),
+            w: w,
+            h: this.G_CELL * 0.68,
+            speed: speedBase * (0.85 + Math.random() * 0.3),
+            dir: dir,
+            type: type
+          });
+        }
+      }
+      lanes[row] = lane;
+    }
+    this.engine = {
+      lanes: lanes,
+      level: level,
+      target: this.randInt(this.G_ENTRANCES.length),
+      player: {
+        row: this.G_START_ROW, col: 4,
+        prevRow: this.G_START_ROW, prevCol: 4,
+        moving: false, moveT: 0, moveDur: 0.13,
+        x: 4 * this.G_CELL + this.G_CELL / 2,
+        y: this.G_START_ROW * this.G_CELL + this.G_CELL / 2
+      },
+      invuln: 1.2,
+      driftTimer: this.driftInterval(level),
+      toast: '', toastT: 0
+    };
+  }
+
+  driftInterval(level) {
+    return Math.max(1.8, 3.6 - (level - 1) * 0.12);
+  }
+
+  cellX(col) { return col * this.G_CELL + this.G_CELL / 2; }
+  cellY(row) { return row * this.G_CELL + this.G_CELL / 2; }
+
+  isRock(row, col) {
+    const lane = this.engine.lanes[row];
+    if (!lane || lane.type !== 'rock') return false;
+    return lane.rocks.indexOf(col) !== -1;
+  }
+
+  startGame() {
+    this.buildEngine(1);
+    this.setState({
+      gameScreen: 'playing',
+      gameScore: 0,
+      gameLevel: 1,
+      gameLives: 3
+    });
+  }
+
+  gMove(dRow, dCol) {
+    if (this.state.gameScreen !== 'playing' || !this.engine) return;
+    const e = this.engine;
+    const p = e.player;
+    if (p.moving) return;
+    const newRow = Math.max(0, Math.min(this.G_ROWS - 1, p.row + dRow));
+    const newCol = Math.max(0, Math.min(this.G_COLS - 1, p.col + dCol));
+    if (newRow === p.row && newCol === p.col) return;
+    if (this.isRock(newRow, newCol)) return;
+    if (newRow === 0 && this.G_ENTRANCES.indexOf(newCol) === -1) return;
+    p.prevRow = p.row; p.prevCol = p.col;
+    p.row = newRow; p.col = newCol;
+    p.moving = true; p.moveT = 0;
+    e.driftTimer = this.driftInterval(e.level) + (dRow < 0 ? 1.0 : 0);
+  }
+
+  gameMoveUp() { this.gMove(-1, 0); }
+  gameMoveDown() { this.gMove(1, 0); }
+  gameMoveLeft() { this.gMove(0, -1); }
+  gameMoveRight() { this.gMove(0, 1); }
+
+  onGameKeyDown(e) {
+    const key = e.key;
+    if (key === 'ArrowUp' || key === 'w' || key === 'W') { e.preventDefault(); this.gMove(-1, 0); }
+    else if (key === 'ArrowDown' || key === 's' || key === 'S') { e.preventDefault(); this.gMove(1, 0); }
+    else if (key === 'ArrowLeft' || key === 'a' || key === 'A') { e.preventDefault(); this.gMove(0, -1); }
+    else if (key === 'ArrowRight' || key === 'd' || key === 'D') { e.preventDefault(); this.gMove(0, 1); }
+  }
+
+  gOnReachTop() {
+    const e = this.engine;
+    const p = e.player;
+    if (p.col === this.G_ENTRANCES[e.target]) {
+      const newScore = this.state.gameScore + 10 * e.level;
+      const newLevel = this.state.gameLevel + 1;
+      e.toast = 'Home! Nice swimming.'; e.toastT = 1.4;
+      this.buildEngine(newLevel);
+      this.setState({ gameScore: newScore, gameLevel: newLevel });
+    } else {
+      e.toast = 'Wrong stream, try again!'; e.toastT = 1.4;
+      p.row = this.G_START_ROW; p.col = 4;
+      p.prevRow = p.row; p.prevCol = p.col;
+      p.moving = false;
+      p.x = this.cellX(p.col); p.y = this.cellY(p.row);
+      e.invuln = 1.0;
+      e.driftTimer = this.driftInterval(e.level);
+    }
+  }
+
+  gLoseLife() {
+    const e = this.engine;
+    const nextLives = this.state.gameLives - 1;
+    if (nextLives <= 0) {
+      const finalScore = this.state.gameScore;
+      const best = Math.max(this.state.gameBest, finalScore);
+      this.setState({ gameScreen: 'over', gameLives: 0, gameFinalScore: finalScore, gameBest: best });
+      return;
+    }
+    const p = e.player;
+    p.row = this.G_START_ROW; p.col = 4;
+    p.prevRow = p.row; p.prevCol = p.col;
+    p.moving = false;
+    p.x = this.cellX(p.col); p.y = this.cellY(p.row);
+    e.invuln = 1.4;
+    e.driftTimer = this.driftInterval(e.level);
+    e.toast = 'Ouch! Watch out.'; e.toastT = 1.2;
+    this.setState({ gameLives: nextLives });
+  }
+
+  gStepEngine(dt) {
+    const e = this.engine;
+    if (!e) return;
+    if (this.state.gameScreen !== 'playing') return;
+    if (e.invuln > 0) e.invuln = Math.max(0, e.invuln - dt);
+    if (e.toastT > 0) e.toastT = Math.max(0, e.toastT - dt);
+
+    const p = e.player;
+    const inRockLane = e.lanes[p.row] && e.lanes[p.row].type === 'rock';
+    if (!inRockLane && p.row !== 0 && p.row !== this.G_START_ROW) {
+      e.driftTimer -= dt;
+      if (e.driftTimer <= 0) {
+        p.row = Math.min(this.G_START_ROW, p.row + 1);
+        p.prevRow = p.row; p.prevCol = p.col;
+        p.x = this.cellX(p.col); p.y = this.cellY(p.row);
+        e.driftTimer = this.driftInterval(e.level);
+        e.toast = 'Swept back by the current!'; e.toastT = 1.1;
+      }
+    }
+
+    for (const rowKey in e.lanes) {
+      const lane = e.lanes[rowKey];
+      if (lane.type === 'rock') continue;
+      for (const hz of lane.hazards) {
+        hz.x += hz.dir * hz.speed * dt;
+        if (hz.dir > 0 && hz.x - hz.w > this.G_W) hz.x = -hz.w;
+        if (hz.dir < 0 && hz.x + hz.w < 0) hz.x = this.G_W + hz.w;
+      }
+    }
+
+    if (p.moving) {
+      p.moveT += dt / p.moveDur;
+      if (p.moveT >= 1) {
+        p.moveT = 1;
+        p.moving = false;
+        p.x = this.cellX(p.col); p.y = this.cellY(p.row);
+        if (p.row === 0) this.gOnReachTop();
+      } else {
+        const t = 1 - (1 - p.moveT) * (1 - p.moveT);
+        const x0 = this.cellX(p.prevCol), y0 = this.cellY(p.prevRow);
+        const x1 = this.cellX(p.col), y1 = this.cellY(p.row);
+        p.x = x0 + (x1 - x0) * t;
+        p.y = y0 + (y1 - y0) * t;
+      }
+    }
+
+    if (e.invuln <= 0) {
+      const lane = e.lanes[p.row];
+      if (lane && lane.type !== 'rock') {
+        for (const hz of lane.hazards) {
+          const laneY = p.row * this.G_CELL + this.G_CELL / 2;
+          const dx = Math.abs(p.x - hz.x);
+          const dy = Math.abs(p.y - laneY);
+          if (dx < (hz.w / 2 + this.G_CELL * 0.28) && dy < (hz.h / 2 + this.G_CELL * 0.2)) {
+            this.gLoseLife();
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  gDrawFrame() {
+    const ctx = this.gCtx;
+    if (!ctx || !this.engine) return;
+    const e = this.engine;
+    ctx.clearRect(0, 0, this.G_W, this.G_H);
+
+    ctx.fillStyle = '#1E5F73';
+    ctx.fillRect(0, 0, this.G_W, this.G_H);
+
+    for (let row = 1; row <= this.G_ROWS - 2; row++) {
+      const lane = e.lanes[row];
+      const y = row * this.G_CELL;
+      ctx.fillStyle = (row % 2 === 0) ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0, y, this.G_W, this.G_CELL);
+      if (lane.type === 'rock') {
+        ctx.fillStyle = '#8C8C8C';
+        lane.rocks.forEach((c) => {
+          ctx.beginPath();
+          ctx.arc(this.cellX(c), y + this.G_CELL / 2, this.G_CELL * 0.32, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      } else {
+        lane.hazards.forEach((hz) => {
+          ctx.fillStyle = hz.type === 'bear' ? '#8B5E3C' : '#6E4E2F';
+          const hx = hz.x, hy = y + this.G_CELL / 2;
+          ctx.beginPath();
+          ctx.ellipse(hx, hy, hz.w / 2, hz.h / 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+    }
+
+    // start bank
+    ctx.fillStyle = '#1B3A5C';
+    ctx.fillRect(0, this.G_START_ROW * this.G_CELL, this.G_W, this.G_CELL);
+    // top bank + entrances
+    ctx.fillStyle = '#5B3E27';
+    ctx.fillRect(0, 0, this.G_W, this.G_CELL);
+    this.G_ENTRANCES.forEach((col, i) => {
+      ctx.fillStyle = '#12303E';
+      ctx.beginPath();
+      ctx.arc(this.cellX(col), this.G_CELL * 0.55, this.G_CELL * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = this.G_ICON_COLORS[i];
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(this.cellX(col), this.G_CELL * 0.55, this.G_CELL * 0.4, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+
+    // player fish
+    const p = e.player;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    if (e.invuln > 0 && Math.floor(e.invuln * 10) % 2 === 0) ctx.globalAlpha = 0.4;
+    const s = this.G_CELL * 0.42;
+    ctx.fillStyle = '#C4441F';
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.55); ctx.lineTo(-s * 0.45, s * 1.05); ctx.lineTo(s * 0.45, s * 1.05);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#FF6B47';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, s * 0.5, s * 0.75, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#1A1A1A';
+    ctx.beginPath();
+    ctx.arc(-s * 0.12, -s * 0.42, s * 0.09, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    if (e.toastT > 0) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, e.toastT * 2);
+      ctx.fillStyle = 'rgba(14,30,23,0.85)';
+      const tw = 210, th = 30;
+      const tx = this.G_W / 2 - tw / 2, ty = 14;
+      ctx.beginPath();
+      if (ctx.roundRect) { ctx.roundRect(tx, ty, tw, th, 15); } else { ctx.rect(tx, ty, tw, th); }
+      ctx.fill();
+      ctx.fillStyle = '#F4EEDD';
+      ctx.font = '700 13px Mulish, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(e.toast, this.G_W / 2, ty + th / 2 + 1);
+      ctx.restore();
+    }
+  }
+
+  gameLoop(now) {
+    if (this.gLastT == null) this.gLastT = now;
+    const dt = Math.min(0.05, (now - this.gLastT) / 1000);
+    this.gLastT = now;
+    this.gStepEngine(dt);
+    this.gDrawFrame();
+    requestAnimationFrame((t) => this.gameLoop(t));
+  }
+
+  pickStage(id) {
+    this.setState({ selectedStage: id });
+  }
+
+  pickItem(id, correct) {
+    const next = Object.assign({}, this.state.itemStatus);
+    next[id] = correct ? 'found' : 'wrong';
+    this.setState({ itemStatus: next, selectedEcoId: id });
+  }
+
+  resetGame() {
+    this.setState({ itemStatus: {}, selectedEcoId: null });
+  }
+
+  toggleNote() {
+    this.setState({ showEducatorNote: !this.state.showEducatorNote });
+  }
+
+  speak(text) {
+    try {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.95;
+        window.speechSynthesis.speak(utter);
+      }
+    } catch (e) {
+      // Speech synthesis unavailable in this browser; fail silently.
+    }
+  }
+
+  playAudio(url) {
+    try {
+      const audio = new Audio(url);
+      audio.play().catch(() => {});
+    } catch (e) {
+      // Playback unavailable; fail silently.
+    }
+  }
+
+  renderVals() {
+    const accent = this.props.accent ?? '#C5852A';
+
+    const stagesData = [
+      { id: 'egg', label: 'Egg', summary: "Tiny orange eggs settle into gravel nests called redds, tucked into the riverbed by the female salmon.", duration: 'About 3 to 5 months, through winter', fact: 'A single female can lay over 2,000 eggs, but only a few will survive to adulthood.', valley: 'In the Columbia River Basin, sockeye lay their eggs in clear, gravel-bottomed tributary streams that feed larger lake and river systems, such as those around the Okanagan.' },
+      { id: 'alevin', label: 'Alevin', summary: "Newly hatched fish stay hidden in the gravel, living off a yolk sac attached to their bellies.", duration: 'A few weeks after hatching', fact: "Alevin do not need to eat yet. Their built-in yolk sac works like a packed lunch.", valley: 'Cold, well-oxygenated water moving through the valley gravel keeps alevin safe while they finish developing over winter.' },
+      { id: 'fry', label: 'Fry', summary: "Young salmon leave the gravel and start swimming and feeding in the stream.", duration: 'Weeks to about a year, depending on the population', fact: 'Fry start out camouflaged with dark, vertical stripes called parr marks.', valley: 'Some Columbia River Basin sockeye populations rear in lakes, such as Osoyoos Lake, for up to a year before continuing their journey.' },
+      { id: 'smolt', label: 'Smolt', summary: "Their bodies change to survive salt water, and they journey downstream toward the ocean.", duration: 'Several weeks of migration', fact: 'Smolts turn silvery, a disguise that helps hide them from predators in open water.', valley: 'Leaving the valley means passing through a long stretch of the Columbia and Okanagan river systems, including several dams, on the way to the Pacific.' },
+      { id: 'ocean', label: 'Ocean Adult', summary: "This ocean-going form of sockeye spends one to three years feeding and growing strong in the open Pacific Ocean.", duration: '1 to 3 years', fact: 'Ocean-feeding sockeye can travel thousands of kilometers before heading home. Landlocked kokanee spend this same stage of life feeding and growing as adults in a freshwater lake instead of the ocean.', valley: 'These same fish will eventually turn back toward the mouth of the Columbia River, aiming for the exact valley streams where they hatched.' },
+      { id: 'spawning', label: 'Spawning Adult', summary: "Adults return to the exact river where they hatched, turning red with green heads as they swim upstream to spawn.", duration: 'A few weeks in autumn', fact: 'Scientists think smell helps sockeye find their way back to their home river.', valley: 'Columbia River Basin sockeye can swim several hundred kilometers upstream, past dams and fish ladders, to reach their home spawning grounds each autumn.' },
+      { id: 'carcass', label: 'Nutrient Return', summary: "After spawning, adult salmon die. Their bodies release nutrients that feed the whole river valley ecosystem.", duration: 'Days to weeks after spawning', fact: 'Nitrogen from salmon bodies has been found in the growth rings of trees along the river.', valley: 'Researchers studying valley rivers have traced ocean-derived nutrients from salmon carcasses into streamside soil, plants, and the animals that feed there.' }
+    ];
+
+    const stageImages = {
+      egg: 'lesson-assets/stage-egg.png',
+      alevin: 'lesson-assets/stage-alevin.png',
+      fry: 'lesson-assets/stage-fry.png',
+      smolt: 'lesson-assets/stage-smolt.png',
+      ocean: 'lesson-assets/stage-ocean.png',
+      spawning: 'lesson-assets/stage-spawning.png',
+      carcass: 'lesson-assets/stage-carcass.png'
+    };
+
+    const stageAudio = {
+      egg: 'lesson-assets/audio-egg.mp4',
+      alevin: 'lesson-assets/audio-alevin.mp4',
+      fry: 'lesson-assets/audio-fry.mp4'
+    };
+
+    let currentStageRaw = stagesData[0];
+
+    const diagramPos = {
+      egg:      { dx: 51, dy: 12 },
+      alevin:   { dx: 78, dy: 29 },
+      fry:      { dx: 83, dy: 54 },
+      smolt:    { dx: 75, dy: 78 },
+      ocean:    { dx: 31, dy: 79 },
+      spawning: { dx: 21, dy: 59 },
+      carcass:  { dx: 22, dy: 33 }
+    };
+
+    const stages = stagesData.map((s, i) => {
+      const selected = this.state.selectedStage === s.id;
+      if (selected) {
+        currentStageRaw = s;
+      }
+      const pos = diagramPos[s.id];
+      return {
+        id: s.id,
+        label: s.label,
+        dx: pos.dx,
+        dy: pos.dy,
+        diagramBorder: selected ? accent : 'transparent',
+        diagramBg: selected ? 'rgba(193,98,45,0.14)' : 'transparent',
+        diagramShadow: selected ? '0 0 0 4px rgba(193,98,45,0.16)' : 'none',
+        selected: selected,
+        pick: () => this.pickStage(s.id)
+      };
+    });
+
+
+    const currentStage = {
+      label: currentStageRaw.label,
+      summary: currentStageRaw.summary,
+      duration: currentStageRaw.duration,
+      fact: currentStageRaw.fact,
+      valley: currentStageRaw.valley,
+      image: stageImages[currentStageRaw.id],
+      number: stagesData.findIndex((s) => s.id === currentStageRaw.id) + 1,
+      listen: () => {
+        const recorded = stageAudio[currentStageRaw.id];
+        if (recorded) {
+          this.playAudio(recorded);
+        } else {
+          this.speak(
+            currentStageRaw.label + '. ' + currentStageRaw.summary + ' ' +
+            'This stage lasts ' + currentStageRaw.duration + '. ' +
+            currentStageRaw.fact + ' ' +
+            'In the Columbia River Basin: ' + currentStageRaw.valley
+          );
+        }
+      }
+    };
+
+    const ecosystemData = [
+      { id: 'bear', name: 'Grizzly Bear', x: 17, y: 52, correct: true, explain: 'Bears fatten up on spawning salmon before winter.' },
+      { id: 'eagle', name: 'Bald Eagle', x: 64, y: 13, correct: true, explain: 'Eagles feed on salmon and salmon carcasses.' },
+      { id: 'otter', name: 'River Otter', x: 30, y: 79, correct: true, explain: 'Otters hunt spawning and weakened salmon in the shallows.' },
+      { id: 'trout', name: 'Rainbow Trout', x: 32, y: 89, correct: true, explain: 'Trout feed heavily on drifting salmon eggs.' },
+      { id: 'insects', name: 'Aquatic Insects', x: 45, y: 74, correct: true, explain: 'Insect larvae feast on decaying salmon tissue in the water.' },
+      { id: 'shrubs', name: 'Riverbank Shrubs', x: 60, y: 82, correct: true, explain: 'Nutrients from salmon soak into the soil and feed streamside plants.' },
+      { id: 'fungi', name: 'Soil Fungi & Bacteria', x: 78, y: 89, correct: true, explain: 'Decomposers break down carcasses, releasing nutrients into the soil.' },
+      { id: 'bicycle', name: 'Bicycle', x: 86, y: 56, correct: false, explain: 'A bicycle is not part of the food web and does not benefit from salmon nutrients.' },
+      { id: 'umbrella', name: 'Umbrella', x: 91, y: 79, correct: false, explain: 'An umbrella has nothing to do with the salmon run.' }
+    ];
+
+    let correctFoundCount = 0;
+    const totalCorrect = ecosystemData.filter((it) => it.correct).length;
+
+    const ecosystemItems = ecosystemData.map((it) => {
+      const status = this.state.itemStatus[it.id];
+      if (status === 'found') correctFoundCount += 1;
+      const isSelected = this.state.selectedEcoId === it.id;
+      let hotspotClass = 'eco-hotspot';
+      if (status === 'found') {
+        hotspotClass = 'eco-hotspot is-found';
+      } else if (status === 'wrong') {
+        hotspotClass = 'eco-hotspot is-wrong';
+      }
+      return {
+        id: it.id,
+        name: it.name,
+        x: it.x,
+        y: it.y,
+        hotspotClass: hotspotClass,
+        selected: isSelected,
+        pick: () => this.pickItem(it.id, it.correct)
+      };
+    });
+
+    const allFound = correctFoundCount === totalCorrect;
+
+    let selectedEcoItem = null;
+    if (this.state.selectedEcoId) {
+      const raw = ecosystemData.find((it) => it.id === this.state.selectedEcoId);
+      if (raw) {
+        const status = this.state.itemStatus[raw.id];
+        const isFound = status === 'found';
+        selectedEcoItem = {
+          name: raw.name,
+          explain: raw.explain,
+          panelBg: isFound ? '#E4EEE1' : '#F6E7E2',
+          panelBorder: isFound ? '#9FB894' : '#E3B49A',
+          textColor: isFound ? '#375030' : '#8A4324',
+          listen: () => this.speak(raw.name + '. ' + raw.explain)
+        };
+      }
+    }
+    const hasSelection = !!selectedEcoItem;
+    const noSelection = !hasSelection;
+
+    const introText = "Every fall, sockeye salmon swim hundreds of kilometers up the Columbia River system to return to the very stream where they were born, and their journey feeds an entire valley.";
+
+    const conservationAudio = null;
+    const termsAudio = null;
+    const termsText = "Run. A run is a group of salmon migrating together from the ocean back to the river where they were born. Runs happen around the same time every year. For sockeye in the Columbia River Basin, that's autumn. " +
+      "Spawning. Spawning is how salmon reproduce. A female digs a nest in the gravel called a redd, lays her eggs there, and a male fertilizes them. Spawning is the final stage of a sockeye's life. Most die within days to weeks afterward.";
+    const doFlipped = !!this.state.flippedCards.do;
+    const dontFlipped = !!this.state.flippedCards.dont;
+    const dragPoint = this.getPointAtT(this.state.dragProgress);
+    const dragPct = Math.round(this.state.dragProgress * 100);
+    const dragArrived = this.state.dragProgress >= 0.97;
+    const conservationText = "Give them space. By the time sockeye reach their spawning grounds, they have swum hundreds of kilometers without eating a single meal. Every bit of energy they have left is needed to dig a redd, spawn, and guard their eggs. A person, a dog, or a boot in the wrong spot can cost a fish energy it cannot get back, or crush eggs already buried in the gravel. " +
+      "Do: watch quietly from the bank or a viewing platform. Keep dogs leashed near the river in autumn. Stay on marked trails and out of the water. Tell an adult or a local streamkeeper group if a spawning area looks disturbed. " +
+      "Don't: wade or walk on the gravel, since redds are often invisible from above. Touch, chase, or try to move a spawning salmon. Let dogs swim or splash near spawning fish. Take flash photos close to the water. " +
+      "Dams, warmer water, and lost habitat already make this journey harder than it used to be. Giving spawning salmon quiet, undisturbed space is one of the simplest ways people can help, and it protects everyone downstream too: the bears, eagles, insects, and trees that depend on this same run.";
+
+    const gameLifePips = [0, 1, 2].map((i) => ({
+      color: i < this.state.gameLives ? '#FF6B47' : 'rgba(255,255,255,0.2)'
+    }));
+    const gameActiveTarget = this.engine ? this.engine.target : 0;
+    const gameTargets = this.G_ICON_COLORS.map((color, i) => ({
+      color: color,
+      ring: i === gameActiveTarget ? '0 0 0 2px #F5F0E6' : 'none'
+    }));
+
+    return {
+      accent: accent,
+      listenIntro: () => this.playAudio('lesson-assets/audio-intro.mp4'),
+      listenTerms: () => {
+        if (termsAudio) {
+          this.playAudio(termsAudio);
+        } else {
+          this.speak(termsText);
+        }
+      },
+      listenConservation: () => {
+        if (conservationAudio) {
+          this.playAudio(conservationAudio);
+        } else {
+          this.speak(conservationText);
+        }
+      },
+      gameScreen: this.state.gameScreen,
+      gameShowStart: this.state.gameScreen === 'start',
+      gameShowOver: this.state.gameScreen === 'over',
+      gameScore: this.state.gameScore,
+      gameLevel: this.state.gameLevel,
+      gameFinalScore: this.state.gameFinalScore,
+      gameBest: this.state.gameBest,
+      gameLifePips: gameLifePips,
+      gameTargets: gameTargets,
+      startGame: () => this.startGame(),
+      gameMoveUp: () => this.gameMoveUp(),
+      gameMoveDown: () => this.gameMoveDown(),
+      gameMoveLeft: () => this.gameMoveLeft(),
+      gameMoveRight: () => this.gameMoveRight(),
+      onGameKeyDown: (e) => this.onGameKeyDown(e),
+      doCardClass: 'flip-card-inner' + (doFlipped ? ' is-flipped' : ''),
+      dontCardClass: 'flip-card-inner' + (dontFlipped ? ' is-flipped' : ''),
+      toggleDoFlip: () => this.toggleFlip('do'),
+      toggleDontFlip: () => this.toggleFlip('dont'),
+      dragX: dragPoint.x,
+      dragY: dragPoint.y,
+      dragPct: dragPct,
+      dragArrived: dragArrived,
+      startDrag: (e) => this.startDrag(e),
+      onDragMove: (e) => this.onDragMove(e),
+      stopDrag: () => this.stopDrag(),
+      resetDrag: () => this.resetDrag(),
+      onDragKeyDown: (e) => this.handleDragKeyDown(e),
+      stages: stages,
+      currentStage: currentStage,
+      ecosystemItems: ecosystemItems,
+      correctFoundCount: correctFoundCount,
+      totalCorrect: totalCorrect,
+      allFound: allFound,
+      selectedEcoItem: selectedEcoItem,
+      hasSelection: hasSelection,
+      noSelection: noSelection,
+      resetGame: () => this.resetGame(),
+      showEducatorNote: this.state.showEducatorNote,
+      noteToggleLabel: this.state.showEducatorNote ? 'Hide' : 'Show',
+      toggleNote: () => this.toggleNote()
+    };
+  }
+}
+
+(function () {
+  var defaultProps = {"accent": "#C5852A"};
+  DCRuntime.mount(Component, document.getElementById('dc-root'), defaultProps);
+})();
+</script>
+
+</body>
+</html>
