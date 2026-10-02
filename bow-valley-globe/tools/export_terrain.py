@@ -22,7 +22,7 @@ from scipy.ndimage import map_coordinates
 CDEM = "/vsicurl/https://datacube-prod-data-public.s3.ca-central-1.amazonaws.com/store/elevation/cdem-cdsm/cdem/cdem-canada-dem.tif"
 BOX = (-116.05, 50.98, -115.02, 51.36)  # lon/lat: Lac des Arcs to Lake Louise
 RES = 20      # metres per cell after reprojection
-SIZE = 96     # grid points per tile side
+SIZE = 192    # grid points per tile side (about 30–40 m spacing; the CDEM itself is ~20 m)
 
 # id: (approx lon, lat; summit search radius m; tile width m; bearing from peak toward viewer, deg;
 #      tile centre shift in m to the viewer's right / toward the viewer)
