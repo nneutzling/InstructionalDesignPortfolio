@@ -19,6 +19,7 @@
   @keyframes menuline{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
   @keyframes scrimin{from{opacity:0}to{opacity:1}}
   @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+  @media (max-width: 760px){.about-grid{grid-template-columns:1fr !important;gap:36px !important}.about-card{max-width:380px;margin:0 auto;aspect-ratio:auto !important;min-height:380px}}
 </style>
 </helmet>
 
@@ -182,9 +183,23 @@
 
   <!-- ===== ABOUT ===== -->
   <section id="about" style="padding:100px clamp(20px,5vw,40px);background:#cdddea;">
-    <div style="max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:54px;align-items:center;">
+    <div class="about-grid" style="max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:54px;align-items:center;">
       <div data-reveal="" style="position:relative;">
-        <div style="border-radius:24px;overflow:hidden;aspect-ratio:4/5;background-image:url('images/nicole-profile-v2.png');background-size:cover;background-position:center top;border:3px solid #7cb4d6;"></div>
+        <div class="about-card" style="border-radius:24px;overflow:hidden;aspect-ratio:4/5;background:#1b2542;border:3px solid #7cb4d6;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(22px,3.4vw,36px);color:#fff;">
+          <span aria-hidden="true" style="position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:40px;background:#f1907f;opacity:.9;transform:rotate(45deg);"></span>
+          <span aria-hidden="true" style="position:absolute;right:70px;top:120px;width:70px;height:70px;border-radius:16px;background:#9ed94d;transform:rotate(45deg);"></span>
+          <span aria-hidden="true" style="position:absolute;left:-40px;bottom:-50px;width:150px;height:150px;border-radius:32px;background:#6fb3d4;opacity:.35;transform:rotate(45deg);"></span>
+          <div style="position:relative;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(64px,9vw,104px);line-height:.9;letter-spacing:-0.05em;">NN</div>
+          <div style="position:relative;">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(20px,2.4vw,26px);letter-spacing:-0.02em;margin-bottom:6px;">Nicole Neutzling</div>
+            <div style="font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#ffb05a;font-weight:700;margin-bottom:18px;">Instructional Designer</div>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:14.5px;line-height:1.4;color:rgba(255,255,255,.86);">
+              <span>◆ From the classroom to learning design</span>
+              <span>◆ Health, certification &amp; community learning</span>
+              <span>◆ AI-supported design &amp; development</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div data-reveal="">
         <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#f1907f;font-weight:700;margin-bottom:16px;">About</div>
@@ -314,7 +329,7 @@ class Component extends DCLogic {
       tools: ['Articulate Rise', 'Articulate Storyline', 'JavaScript', 'Claude Code'],
       overview: 'A 10-week intensive course supporting professionals preparing for the PMP certification exam, taken from concept to launch in roughly three months. I worked across a multidisciplinary team — subject matter expert, video production, and graphic designer — focused on designing the learning experience, structuring content, supporting development workflows, and building interactive learning and assessment components.',
       challenge: 'Create a high-quality, comprehensive PMP prep experience on a compressed timeline, balancing depth, clarity, engagement, and realistic exam practice for adult learners juggling work and life. Learners needed exam-style questions, meaningful feedback, and familiarity with the pacing and structure of certification-style assessment.',
-      role: 'I organized content into a clear 10-week pathway, supported asset development, built eLearning components, and created assessment experiences aligned to PMP exam prep. I also implemented technology-enhanced solutions: using ChatGPT, Claude, and Claude Code, I customized JavaScript inside Storyline to build a custom exam simulator — five simulators with more than 500 practice questions. When Storyline\u2019s customization hit its limits, I used Claude Design to prototype an app-based exam experience for added flexibility and a more tailored practice environment.',
+      role: 'I organized content into a clear 10-week pathway, supported asset development, built eLearning components, and created assessment experiences aligned to PMP exam prep. I also implemented technology-enhanced solutions: using ChatGPT, Claude, and Claude Code, I customized JavaScript inside Storyline to build the original exam simulators — five simulators with more than 500 practice questions. That work grew into the custom assessment suite described in the next case study.',
       approach: 'An intensive but structured experience, organized to support progression over 10 weeks with an emphasis on applied understanding, exam readiness, and learner confidence.',
       approachPoints: [
         'Coordinated with the SME to clarify priorities and organize complex content',
@@ -337,7 +352,82 @@ class Component extends DCLogic {
       ],
     },
     {
-      slug: 'real-estate-program', num: '02', accent: '#6fb3d4',
+      slug: 'peak-ai-assessments', num: '02', accent: '#34456b',
+      title: 'Peak PMP Prep — AI-Built Exam Simulators & Application Builder',
+      context: 'AI-supported assessment development',
+      outcome: 'Custom PMP & CAPM assessment suite plus an AI-feedback application tool',
+      tools: ['Claude', 'Claude Code', 'Claude Design', 'ChatGPT', 'JavaScript', 'SCORM 1.2'],
+      overview: 'For the 2026 redevelopment of Peak PMP Prep, I designed and built the full assessment experience for both PMP and CAPM learners: baseline quizzes, weekly quizzes, practice-question sets, and full-length exam simulators (180 questions for PMP, 150 for CAPM). I also built the PMP Application Builder, an interactive tool that walks learners through PMI eligibility and helps them draft their application with AI feedback. Everything was developed with AI as a build partner and packaged as SCORM for the course LMS.',
+      challenge: 'Learners needed assessments that felt like the real exam: timed, navigable, and backed by detailed feedback. Off-the-shelf authoring tools could not deliver that level of control, and the SME had specific expectations for look, flow, and scoring that changed as the course took shape. The application tool raised the stakes further. Errors in PMI eligibility rules can cost a learner an audit or a rejected application, so accuracy and responsible AI feedback were non-negotiable.',
+      role: 'I designed the assessment strategy and built each component using Claude, Claude Code, Claude Design, and ChatGPT to generate and refine custom HTML and JavaScript, then packaged the results as SCORM 1.2. I managed the item bank and SME review workflow, translated SME feedback into specific design and functionality changes, and wrote a structured SME review protocol for the Application Builder covering PMI accuracy, AI feedback quality, and learner experience.',
+      approach: 'Treat AI as a development partner, not a shortcut: I set the learning and assessment requirements, AI accelerated the build, and SME review gated every release.',
+      approachPoints: [
+        'Built exam-realistic practice: countdown timer with auto-submit, question grid for free navigation, unlimited attempts, and a downloadable PDF of feedback for every question',
+        'Structured a progression from baseline quiz to weekly quizzes, practice sets, and two full-length simulators, with guidance on reviewing results between attempts',
+        'Iterated on SME feedback: reserving blue for correct answers, a segmented progress bar, higher-contrast text for accessibility, layouts that fit a laptop screen, and separate pre- and post-course packages',
+        'Managed questions in a central item bank with an SME review workflow before each build',
+        'Application Builder: eligibility-set selection, an experience totaller that applies the 8-year window and counts overlapping months once, and a readiness bar',
+        'Application Builder: project descriptions organized by process group with starter verbs, AI feedback scored on four dimensions with model phrasing, and a PDF export learners keep',
+        'Wrote clear disclaimers so AI feedback never implies PMI approval, and a review protocol for SMEs to test strong and weak drafts',
+      ],
+      statusLabel: 'Current status',
+      status: 'The assessment suite is in use in the 2026 cohort. The Application Builder has gone through structured SME review ahead of release. Full versions are proprietary to Peak PMP Prep; a short sample is available on request.',
+      demonstrates: 'Advanced, responsible use of AI in instructional design: building custom assessment applications beyond what authoring tools allow, translating SME feedback into precise design changes, keeping accuracy and accessibility at the centre, and packaging custom builds for real LMS delivery.',
+      shots: [
+        { img: 'images/peak-capm-start.png', label: 'CAPM practice set — start screen', pos: 'center' },
+        { img: 'images/peak-capm-question.png', label: 'Timed question view with question grid', pos: 'left top' },
+      ],
+      links: [
+        { type: 'website', label: 'Visit the Peak PMP Prep website', url: 'https://peakpmprep.com/' },
+      ],
+    },
+    {
+      slug: 'abspor-patient-oriented-research', num: '03', accent: '#9ed94d',
+      title: 'AbSPORU — Online Learning for Patient-Oriented Research',
+      context: 'Health research education · co-design',
+      outcome: 'Courses and patient-partner certificates co-designed with patients and researchers',
+      tools: ['Co-design', 'SME collaboration', 'Online course design', 'Certificate design'],
+      overview: 'As an educational consultant with the Alberta SPOR SUPPORT Unit (AbSPORU), I co-designed online learning for health researchers and patient partners working in patient-oriented research (POR). The work included courses on Equity, Diversity, Inclusion and Accessibility (EDIA) in POR, Patient Engagement in POR, and Knowledge Translation in POR, plus certificates that prepare new patient partners to participate effectively in research projects.',
+      challenge: 'Patient-oriented research depends on patients and researchers working as genuine partners, so the learning had to work for two very different audiences: researchers with deep subject expertise and patient partners bringing lived experience, often without a research background. The content needed to be accurate and credible for researchers while staying accessible, inclusive, and welcoming for patient partners.',
+      role: 'I co-designed the courses and certificates alongside patient partners and health researcher subject matter experts. I shaped the learning design, structured the content for online delivery, and made sure each course reflected both research expertise and patient perspectives.',
+      approach: 'Practise what the content teaches: design patient-oriented research education the patient-oriented way, with patient partners at the table from the start.',
+      approachPoints: [
+        'Co-designed with patient partners and health researcher SMEs as equal contributors',
+        'Developed courses on EDIA in POR, Patient Engagement in POR, and Knowledge Translation in POR',
+        'Designed certificates that prepare new patient partners to take part in research projects',
+        'Wrote for mixed audiences in plain, inclusive, accessible language',
+        'Grounded learning in practical application to real research projects',
+      ],
+      statusLabel: '',
+      status: '',
+      demonstrates: 'Co-design with community and expert partners, designing for diverse adult audiences, and translating complex health research concepts into accessible, inclusive online learning.',
+      shots: [],
+      links: [],
+    },
+    {
+      slug: 'larch-and-lichen', num: '04', accent: '#ffb05a',
+      title: 'Larch and Lichen — Place-Conscious Learning for the Columbia Valley',
+      context: 'Own venture · Grades 3–5',
+      outcome: 'Educator resources and interactive online lessons rooted in local landscapes',
+      tools: ['AI-supported design', 'Interactive lessons', 'Educator resources', 'Place-based learning'],
+      overview: 'Larch and Lichen is my own venture: place-conscious learning resources and online lessons for students in grades 3, 4, and 5 in the Columbia Valley. I use AI to create both educator resources and interactive online lessons that help young learners explore and understand the natural environment around them.',
+      challenge: 'Most environmental education resources are generic. Students in the Columbia Valley learn best when lessons connect to the forests, wetlands, wildlife, and landscapes they actually live in. As a solo creator, I also needed a way to produce high-quality, age-appropriate lessons and matching teacher materials efficiently.',
+      role: 'I lead everything: learning design, content, and development. I use AI tools to accelerate production of educator guides and learner-facing interactive lessons, then review and refine everything for accuracy, local relevance, and the needs of grade 3–5 learners and their teachers.',
+      approach: 'Start from place: build learning around the local environment so students see their own valley in what they study, and give teachers ready-to-use resources that make that easy.',
+      approachPoints: [
+        'Designed place-conscious lessons tied to the natural environment of the Columbia Valley',
+        'Created paired resources: educator materials and learner-facing interactive online lessons',
+        'Used AI to speed up drafting and development, with careful human review for accuracy and age-appropriateness',
+        'Wrote for grade 3–5 reading levels and attention spans',
+      ],
+      statusLabel: 'Current status',
+      status: 'Larch and Lichen is an active, growing project, with new lessons and educator resources in development.',
+      demonstrates: 'Entrepreneurial instructional design, designing for young learners and their teachers, place-based learning, and practical use of AI to produce engaging resources as a solo creator.',
+      shots: [],
+      links: [],
+    },
+    {
+      slug: 'real-estate-program', num: '05', accent: '#6fb3d4',
       title: 'Real Estate Development Program — Professional Development Series',
       context: 'Professional development series',
       outcome: 'Unified 9 subject-matter experts into one cohesive program',
@@ -366,7 +456,7 @@ class Component extends DCLogic {
       ],
     },
     {
-      slug: 'phsa-pathogens', num: '03', accent: '#34456b',
+      slug: 'phsa-pathogens', num: '06', accent: '#34456b',
       title: 'PHSA High Threat Pathogens — Provincial Health-Care Training',
       context: 'Provincial health-care training',
       outcome: 'Province-wide course redeveloped mid-project without losing quality',
@@ -395,7 +485,7 @@ class Component extends DCLogic {
       ],
     },
     {
-      slug: 'ipac-refresher', num: '04', accent: '#9ed94d',
+      slug: 'ipac-refresher', num: '07', accent: '#9ed94d',
       title: 'IPAC for Health-Care Workers — 30-Minute Refresher',
       context: 'Provincial health-care training',
       outcome: '90-minute course condensed into a focused 30-minute refresher',
@@ -425,7 +515,7 @@ class Component extends DCLogic {
       ],
     },
     {
-      slug: 'acc-trip-leader', num: '05', accent: '#ffb05a',
+      slug: 'acc-trip-leader', num: '08', accent: '#ffb05a',
       title: 'Alpine Club of Canada — Trip Leader Guide',
       context: 'Volunteer outdoor leadership training',
       outcome: 'Static handbook transformed into scenario-based eLearning',
@@ -455,7 +545,7 @@ class Component extends DCLogic {
       ],
     },
     {
-      slug: 'bow-valley-mountains', num: '06', accent: '#6fb3d4',
+      slug: 'bow-valley-mountains', num: '09', accent: '#6fb3d4',
       title: 'Mountains of the Bow Valley — Storyline Interaction Challenge',
       context: 'Self-directed Storyline challenge',
       outcome: 'Custom dial- and slider-driven interactions with AI-generated visuals and audio',
