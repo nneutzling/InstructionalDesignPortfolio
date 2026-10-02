@@ -1,23 +1,38 @@
 """Cut one elevation tile per peak from NRCan's Canadian Digital Elevation Model and embed them in ../index.html.
 
-    pip install rasterio scipy pyproj numpy
+    pip install rasterio scipy pyproj numpy pysheds scikit-image
     python export_terrain.py
 
 Reads only the Bow Valley window of the national CDEM (a cloud-optimised GeoTIFF), reprojects it to
 UTM 11N at 20 m, then samples a square grid around each summit, turned so the viewer looks at the peak
 from its best-known side. Rows run from the far side to the viewer's side; values are metres above sea level.
 
+Water is traced from the same elevation data:
+  - lakes: the CDEM stores water surfaces as perfectly flat patches, so flat areas over 0.06 km2 are water,
+    except flat terraces at 20 m contour heights, which are an artefact of how the CDEM was made;
+  - streams: cells draining more than 15 km2 (D8 flow accumulation);
+  - the Bow River: the lowest-cost path along the valley floor from the west edge of the window to the east.
+Each tile gets a water bitmask, plus the points where the Bow crosses into and out of it (upstream first),
+which the page uses to join the tiles with one river around the globe.
+
 Source: Canadian Digital Elevation Model, Natural Resources Canada, Open Government Licence - Canada.
 """
 import base64, json, pathlib, re
 
 import numpy as np
+if not hasattr(np, "in1d"):  # pysheds still calls the old name
+    np.in1d = np.isin
+import pyproj
 import rasterio
 from pyproj import Transformer
 from rasterio.transform import from_origin
 from rasterio.warp import Resampling, reproject, transform_bounds
 from rasterio.windows import from_bounds
+from pysheds.grid import Grid
+from pysheds.sview import Raster, ViewFinder
+from scipy import ndimage
 from scipy.ndimage import map_coordinates
+from skimage.graph import route_through_array
 
 CDEM = "/vsicurl/https://datacube-prod-data-public.s3.ca-central-1.amazonaws.com/store/elevation/cdem-cdsm/cdem/cdem-canada-dem.tif"
 BOX = (-116.05, 50.98, -115.02, 51.36)  # lon/lat: Lac des Arcs to Lake Louise
@@ -27,11 +42,13 @@ SIZE = 192    # grid points per tile side (about 30–40 m spacing; the CDEM its
 # id: (approx lon, lat; summit search radius m; tile width m; bearing from peak toward viewer, deg;
 #      tile centre shift in m to the viewer's right / toward the viewer)
 PEAKS = {
-    "yamnuska": (-115.1222, 51.1186, 700, 6000, 165, (-500, 0)),   # cliff seen from Highway 1A to the south
-    "sisters":  (-115.3345, 51.0247, 2500, 7000, 330, (0, 0)),     # from Canmore
-    "rundle":   (-115.4987, 51.1197, 2500, 8000, 315, (0, 0)),     # from Vermilion Lakes
-    "cascade":  (-115.5664, 51.2236, 1500, 7000, 185, (0, 0)),     # from Banff Avenue
-    "castle":   (-115.9256, 51.2958, 700, 7500, 225, (-800, 0)),   # from the Trans-Canada Highway
+# Tiles are pushed toward the viewer so the Bow River runs through the foreground where it is close enough
+    # (the Three Sisters stand 7-8 km from it, so there the river passes in front of the tile on the globe).
+    "yamnuska": (-115.1222, 51.1186, 700, 7500, 165, (-500, 1600)),     # cliff seen from Highway 1A to the south
+    "sisters":  (-115.3345, 51.0247, 2500, 8500, 330, (0, 2600)),       # from Canmore
+    "rundle":   (-115.4987, 51.1197, 2500, 8000, 315, (-1000, 1500)),   # from Vermilion Lakes
+    "cascade":  (-115.5664, 51.2236, 1500, 9000, 185, (0, 2700)),       # from Banff Avenue
+    "castle":   (-115.9256, 51.2958, 700, 8000, 225, (-800, 1200)),     # from the Trans-Canada Highway
 }
 
 
@@ -49,8 +66,44 @@ def load_dem():
     return np.nan_to_num(dst, nan=1300), ub[0], ub[3]
 
 
+def trace_water(dem, x0, y0):
+    """Return (water mask, Bow River path as (row, col) cells), both on the 20 m UTM grid."""
+    vf = ViewFinder(affine=from_origin(x0, y0, RES, RES), shape=dem.shape, crs=pyproj.Proj("EPSG:32611"), nodata=np.nan)
+    grid = Grid(viewfinder=vf)
+    filled = grid.resolve_flats(grid.fill_depressions(grid.fill_pits(Raster(dem.astype(np.float64), viewfinder=vf))))
+    acc = np.asarray(grid.accumulation(grid.flowdir(filled)))
+    streams = ndimage.binary_dilation(acc * RES * RES > 15e6, iterations=1)
+
+    gy, gx = np.gradient(dem.astype(np.float64))
+    lab, n = ndimage.label((np.abs(gx) < 1e-3) & (np.abs(gy) < 1e-3))
+    keep = []
+    for k, sl in enumerate(ndimage.find_objects(lab), start=1):
+        area = (lab[sl] == k).sum() * RES * RES
+        level = dem[sl][lab[sl] == k].mean()
+        # The CDEM was built from 20 m contours and leaves flat terraces at contour heights on gentle valley
+        # floors. Real lake surfaces rarely sit on a contour value, so skip flats there unless they are big.
+        on_contour = abs(level - round(level / 20) * 20) < 1.2
+        if area > 60000 and (not on_contour or area > 10e6):
+            keep.append(k)
+    lakes = np.isin(lab, keep)
+    lakes = ndimage.binary_closing(ndimage.binary_dilation(lakes, iterations=1), iterations=2)
+
+    H, W = dem.shape
+    start = min([(r, 0) for r in range(200, 1000)] + [(0, c) for c in range(800)], key=lambda p: dem[p])
+    end = min([(r, W - 2) for r in range(600, 1800)], key=lambda p: dem[p])
+    cost = np.exp((dem - 1250) / 35.0)
+    cost[lakes] *= 0.5
+    path = np.array(route_through_array(cost, start, end, fully_connected=True, geometric=True)[0])
+    bow = np.zeros_like(lakes)
+    bow[path[:, 0], path[:, 1]] = True
+    bow = ndimage.binary_dilation(bow, iterations=3)   # about 140 m wide, to match the ribbon on the globe
+    return lakes | streams | bow, path
+
+
 def main():
     dem, x0, y0 = load_dem()
+    water, bow_path = trace_water(dem, x0, y0)
+    bow_xy = np.c_[x0 + bow_path[:, 1] * RES, y0 - bow_path[:, 0] * RES]   # upstream (west) first
     fw = Transformer.from_crs("EPSG:4326", "EPSG:32611", always_xy=True)
     out = {}
     for key, (lon, lat, search, L, bearing, (shift_r, shift_t)) in PEAKS.items():
@@ -65,10 +118,18 @@ def main():
         g = np.linspace(-L / 2, L / 2, SIZE)
         V, U = np.meshgrid(g, g, indexing="ij")
         ex, ny = cx + U * right[0] + V * toward[0], cy + U * right[1] + V * toward[1]
-        h = map_coordinates(dem, [(y0 - ny) / RES, (ex - x0) / RES], order=1)
-        out[key] = dict(size=SIZE, extent=L, base=round(float(np.percentile(h, 3))), bearing=bearing,
-                        h=base64.b64encode(np.clip(np.round(h), 0, 65535).astype("<u2").tobytes()).decode())
-        print(f"{key}: DEM summit {sub[rr, cc]:.0f} m, valley {out[key]['base']} m")
+        rows, cols = (y0 - ny) / RES, (ex - x0) / RES
+        h = map_coordinates(dem, [rows, cols], order=1)
+        wet = map_coordinates(water.astype(np.uint8), [rows, cols], order=0).astype(bool)
+        # Where the Bow enters and leaves the tile, in tile units (-0.5..0.5), at 0.9 of the tile radius.
+        rel = bow_xy - [cx, cy]
+        uv = np.c_[rel @ right, rel @ toward] / L
+        inside = np.where(np.hypot(*uv.T) < 0.45)[0]
+        bow = [uv[inside[0]].round(4).tolist(), uv[inside[-1]].round(4).tolist()] if len(inside) else None
+        out[key] = dict(size=SIZE, extent=L, base=round(float(np.percentile(h, 3))), bearing=bearing, bow=bow,
+                        h=base64.b64encode(np.clip(np.round(h), 0, 65535).astype("<u2").tobytes()).decode(),
+                        water=base64.b64encode(np.packbits(wet.ravel(), bitorder="little").tobytes()).decode())
+        print(f"{key}: DEM summit {sub[rr, cc]:.0f} m, valley {out[key]['base']} m, water {wet.mean():.1%}, Bow {bow}")
 
     page = pathlib.Path(__file__).resolve().parent.parent / "index.html"
     html = page.read_text()
