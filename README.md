@@ -9,7 +9,7 @@ Static portfolio site, ready for GitHub Pages.
   - `alpine-club/` — Alpine Club of Canada Trip Leader Guide (public)
   - `bow-valley/` — Mountains of the Bow Valley Storyline challenge (public)
 
-PHSA and IPAC are client work: show them with screenshots and video only, never the course files.
+REDP, PHSA and IPAC are client work: show them with screenshots and video only, never the course files.
 
 ## Adding a course
 
