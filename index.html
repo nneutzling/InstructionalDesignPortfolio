@@ -57,7 +57,7 @@
     <div style="position:relative;z-index:5;padding:0 clamp(24px,7vw,90px);max-width:940px;">
       <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);padding:7px 15px;border-radius:100px;margin-bottom:28px;">
         <span style="width:7px;height:7px;border-radius:50%;background:#9ed94d;box-shadow:0 0 0 3px rgba(158,217,77,.22);"></span>
-        <span style="font-size:12.5px;font-weight:600;letter-spacing:0.03em;color:#dbe4f2;">Instructional Designer &amp; eLearning Developer</span>
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:0.03em;color:#dbe4f2;">Education Consultant · Learning Design &amp; eLearning</span>
       </div>
       <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#ffffff;font-size:clamp(37px,5.7vw,72px);line-height:1.01;letter-spacing:-0.038em;text-wrap:balance;">Human-Centred Learning Design, Powered by Technology</h1>
       <p style="margin:26px 0 0;font-size:clamp(17px,2.1vw,21px);line-height:1.55;color:#aeb9d4;max-width:560px;font-weight:500;">I create eLearning and training experiences that make complex information easier to understand, apply, and remember , using instructional design, storytelling, and emerging AI tools.</p>
@@ -192,7 +192,7 @@
           <div style="position:relative;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(64px,9vw,104px);line-height:.9;letter-spacing:-0.05em;">NN</div>
           <div style="position:relative;">
             <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(20px,2.4vw,26px);letter-spacing:-0.02em;margin-bottom:6px;">Nicole Neutzling</div>
-            <div style="font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#ffb05a;font-weight:700;margin-bottom:18px;">Instructional Designer</div>
+            <div style="font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#ffb05a;font-weight:700;margin-bottom:18px;">Education Consultant</div>
             <div style="display:flex;flex-direction:column;gap:9px;font-size:14.5px;line-height:1.4;color:rgba(255,255,255,.86);">
               <span>◆ From the classroom to learning design</span>
               <span>◆ Health, certification &amp; community learning</span>
@@ -363,6 +363,7 @@ class Component extends DCLogic {
       approach: 'Treat AI as a development partner, not a shortcut: I set the learning and assessment requirements, AI accelerated the build, and SME review gated every release.',
       approachPoints: [
         'Built exam-realistic practice: countdown timer with auto-submit, question grid for free navigation, unlimited attempts, and a downloadable PDF of feedback for every question',
+        'Supported multiple item types (multiple choice, choose-two, table, and clickable network-diagram hotspots) and coded domain scoring that maps every question to its exam domain and shows performance against target',
         'Structured a progression from baseline quiz to weekly quizzes, practice sets, and two full-length simulators, with guidance on reviewing results between attempts',
         'Iterated on SME feedback: reserving blue for correct answers, a segmented progress bar, higher-contrast text for accessibility, layouts that fit a laptop screen, and separate pre- and post-course packages',
         'Managed questions in a central item bank with an SME review workflow before each build',
@@ -374,8 +375,8 @@ class Component extends DCLogic {
       status: 'The assessment suite is in use in the 2026 cohort. The Application Builder has gone through structured SME review ahead of release. Full versions are proprietary to Peak PMP Prep; a short sample is available on request.',
       demonstrates: 'Advanced, responsible use of AI in instructional design: building custom assessment applications beyond what authoring tools allow, translating SME feedback into precise design changes, keeping accuracy and accessibility at the centre, and packaging custom builds for real LMS delivery.',
       shots: [
-        { img: 'images/peak-capm-start.png', label: 'CAPM practice set — start screen', pos: 'center' },
         { img: 'images/peak-capm-question.png', label: 'Timed question view with question grid', pos: 'left top' },
+        { img: 'images/peak-capm-results.png', label: 'Results with domain scoring', pos: 'center top' },
       ],
       links: [
         { type: 'website', label: 'Visit the Peak PMP Prep website', url: 'https://peakpmprep.com/' },
@@ -409,7 +410,7 @@ class Component extends DCLogic {
       title: 'Larch and Lichen — Place-Conscious Learning for the Columbia Valley',
       context: 'Own venture · Grades 3–5',
       outcome: 'Educator resources and interactive online lessons rooted in local landscapes',
-      tools: ['AI-supported design', 'Interactive lessons', 'Educator resources', 'Place-based learning'],
+      tools: ['Claude Design', 'Claude Code', 'HTML & JavaScript', 'AI illustration & audio'],
       overview: 'Larch and Lichen is my own venture: place-conscious learning resources and online lessons for students in grades 3, 4, and 5 in the Columbia Valley. I use AI to create both educator resources and interactive online lessons that help young learners explore and understand the natural environment around them.',
       challenge: 'Most environmental education resources are generic. Students in the Columbia Valley learn best when lessons connect to the forests, wetlands, wildlife, and landscapes they actually live in. As a solo creator, I also needed a way to produce high-quality, age-appropriate lessons and matching teacher materials efficiently.',
       role: 'I lead everything: learning design, content, and development. I use AI tools to accelerate production of educator guides and learner-facing interactive lessons, then review and refine everything for accuracy, local relevance, and the needs of grade 3–5 learners and their teachers.',
@@ -417,13 +418,18 @@ class Component extends DCLogic {
       approachPoints: [
         'Designed place-conscious lessons tied to the natural environment of the Columbia Valley',
         'Created paired resources: educator materials and learner-facing interactive online lessons',
+        'Built interactive lesson moments: a clickable salmon life-cycle explorer, a swim-upstream game, narrated audio, and a printable field journal',
+        'Organized content into four units per season, each with an educator guide and short online lessons',
         'Used AI to speed up drafting and development, with careful human review for accuracy and age-appropriateness',
         'Wrote for grade 3–5 reading levels and attention spans',
       ],
       statusLabel: 'Current status',
       status: 'Larch and Lichen is an active, growing project, with new lessons and educator resources in development.',
       demonstrates: 'Entrepreneurial instructional design, designing for young learners and their teachers, place-based learning, and practical use of AI to produce engaging resources as a solo creator.',
-      shots: [],
+      shots: [
+        { img: 'images/larch-home.png', label: 'Larch & Lichen Learning — home page', pos: 'center top' },
+        { img: 'images/larch-lifecycle.png', label: 'Interactive sockeye life-cycle explorer', pos: 'center' },
+      ],
       links: [],
     },
     {
