@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mountains of the Bow Valley</title>
+<meta name="description" content="Drag the world to explore six mountains of the Bow Valley, with their Indigenous and English names.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/globe.webp">
+<style>
+  :root {
+    --sky: #88afd5;
+    --glow: #96daed;
+    --navy: #1e3a5f;
+    --ink: #17233b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--sky); }
+  body {
+    display: grid; place-items: center; overflow: hidden;
+    font-family: 'Josefin Sans', system-ui, sans-serif; color: var(--ink);
+  }
+
+  .stage {
+    position: relative; overflow: hidden; container-type: inline-size;
+    width: min(100vw, 177.78vh); aspect-ratio: 16 / 9; background: var(--sky);
+    user-select: none; -webkit-user-select: none;
+  }
+
+  /* Globe sits low and left, mostly below the frame, as in the Storyline original. */
+  .glow {
+    position: absolute; left: 2%; top: 36%; width: 40%; height: 58%; border-radius: 50%;
+    background: var(--glow); border: 0.3cqw dashed rgba(118, 205, 232, .95);
+    box-shadow: 0 0 2.4cqw 0.6cqw rgba(160, 228, 246, .75);
+  }
+  .clouds, .globe {
+    position: absolute; left: -23%; top: 42.5%; width: 90%; aspect-ratio: 1;
+    transform-origin: 50% 50%; will-change: transform; pointer-events: none;
+  }
+  .clouds { left: -29.75%; top: 30.5%; width: 103.5%; opacity: .95; }
+  .globe img, .clouds img { width: 100%; height: 100%; display: block; object-fit: contain; -webkit-user-drag: none; }
+  .snapping .globe, .snapping .clouds { transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
+
+  .drag-zone {
+    position: absolute; left: 0; top: 30%; width: 58%; height: 70%;
+    cursor: grab; touch-action: none; border-radius: 0 50% 0 0; outline: none;
+  }
+  .drag-zone:active { cursor: grabbing; }
+  .drag-zone:focus-visible { box-shadow: inset 0 0 0 0.25cqw var(--navy); }
+
+  /* Right-hand panel: home title or the current mountain's name artwork */
+  .panel {
+    position: absolute; left: 46%; width: 50%; top: 0; height: 100%;
+    display: grid; place-items: center; pointer-events: none;
+  }
+  .panel > * { grid-area: 1 / 1; transition: opacity .45s ease, transform .45s ease; }
+  .panel .is-hidden { opacity: 0; transform: translateY(1.2cqw); }
+
+  .home { text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .home img { width: 22cqw; margin-bottom: 1.4cqw; }
+  .home h1 { margin: 0; font-family: 'Cinzel', serif; font-weight: 700; line-height: 1.05; letter-spacing: .08em; }
+  .home h1 .l1 { display: block; font-size: 4.6cqw; }
+  .home h1 .l2 { display: block; font-size: 1.8cqw; font-weight: 500; letter-spacing: .3em; margin: .5cqw 0; }
+  .home h1 .l3 { display: block; font-size: 3.4cqw; }
+  .hint {
+    margin-top: 2.6cqw; display: inline-flex; align-items: center; gap: .8cqw;
+    font-size: 1.45cqw; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--navy);
+  }
+  .hint svg { width: 2.2cqw; height: 2.2cqw; animation: nudge 2.4s ease-in-out infinite; }
+  @keyframes nudge { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-40deg); } }
+
+  .name { display: flex; justify-content: center; }
+  .name img { display: block; height: auto; width: calc(var(--w, 40) * 1cqw); }
+
+  /* Controls */
+  .btn {
+    position: absolute; display: grid; place-items: center; border: 0; cursor: pointer;
+    background: #fff; color: var(--navy); border-radius: 50%;
+    box-shadow: 0 .35cqw .9cqw rgba(23, 35, 59, .28); transition: transform .15s ease;
+  }
+  .btn:hover { transform: translateY(-.15cqw); }
+  .btn:focus-visible { outline: .25cqw solid var(--navy); outline-offset: .25cqw; }
+  .btn svg { width: 55%; height: 55%; }
+  .sound { left: 1.6cqw; top: 1.6cqw; width: 4.4cqw; height: 4.4cqw; }
+
+  .nav { position: absolute; right: 2.4cqw; bottom: 2.4cqw; display: flex; align-items: center; gap: 1.2cqw; }
+  .nav .btn { position: static; width: 3.6cqw; height: 3.6cqw; }
+  .dots { display: flex; gap: .7cqw; }
+  .dots button {
+    width: 1.1cqw; height: 1.1cqw; padding: 0; border-radius: 50%; cursor: pointer;
+    border: .18cqw solid var(--navy); background: transparent;
+  }
+  .dots button[aria-current="true"] { background: var(--navy); }
+  .dots button:focus-visible { outline: .2cqw solid var(--navy); outline-offset: .2cqw; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Portrait phones: globe across the bottom, name above it. */
+  @media (orientation: portrait) and (max-width: 820px) {
+    .stage { width: 100vw; height: 100vh; height: 100dvh; aspect-ratio: auto; }
+    .globe { width: 200cqw; left: -50cqw; top: calc(100% - 80cqw); }
+    .clouds { width: 230cqw; left: -65cqw; top: calc(100% - 95cqw); }
+    .glow { width: 86cqw; height: 66cqw; left: 7cqw; top: calc(100% - 96cqw); border-width: .8cqw; }
+    .drag-zone { left: 0; width: 100%; top: auto; bottom: 0; height: 62%; border-radius: 0; }
+    .panel { left: 5%; width: 90%; top: 6%; height: 40%; }
+    .home img { width: 46cqw; margin-bottom: 3cqw; }
+    .home h1 .l1 { font-size: 11cqw; }
+    .home h1 .l2 { font-size: 4.4cqw; margin: 1.2cqw 0; }
+    .home h1 .l3 { font-size: 8cqw; }
+    .hint { font-size: 3.6cqw; margin-top: 5cqw; gap: 2cqw; }
+    .hint svg { width: 5.5cqw; height: 5.5cqw; }
+    .name img { width: min(calc(var(--w, 40) * 2.1cqw), 88cqw); }
+    .sound { left: 4cqw; top: 4cqw; width: 11cqw; height: 11cqw; }
+    .nav { right: 50%; transform: translateX(50%); bottom: 5cqw; gap: 3cqw; }
+    .nav .btn { width: 11cqw; height: 11cqw; }
+    .dots { gap: 2cqw; }
+    .dots button { width: 3cqw; height: 3cqw; border-width: .5cqw; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .snapping .globe, .snapping .clouds, .panel > * { transition: none; }
+    .hint svg { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="stage" id="stage">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="clouds" id="clouds" aria-hidden="true"><img src="assets/clouds.webp" alt=""></div>
+  <div class="globe" id="globe" aria-hidden="true"><img src="assets/globe.webp" alt=""></div>
+
+  <div class="drag-zone" id="dragZone" tabindex="0" role="slider"
+       aria-label="Rotate the world to explore the mountains. Use the arrow keys or drag."
+       aria-valuemin="1" aria-valuemax="6" aria-valuenow="3"></div>
+
+  <div class="panel" id="panel">
+    <div class="home" id="home">
+      <img src="assets/logo-mountains.webp" alt="">
+      <h1><span class="l1">Mountains</span><span class="l2">of</span><span class="l3">The Bow Valley</span></h1>
+      <div class="hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+        Drag the world to explore
+      </div>
+    </div>
+    <div class="name is-hidden" id="name"><img id="nameImg" alt=""></div>
+  </div>
+
+  <button class="btn sound" id="sound" type="button" aria-pressed="false" aria-label="Play music">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 9h3l5-4v14l-5-4H4z"/>
+      <g id="waves" style="display:none"><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18 7a7 7 0 0 1 0 10"/></g>
+      <path id="mute" d="M3 3l18 18"/>
+    </svg>
+  </button>
+
+  <nav class="nav" aria-label="Mountains">
+    <button class="btn" id="prev" type="button" aria-label="Previous mountain">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="dots" id="dots"></div>
+    <button class="btn" id="next" type="button" aria-label="Next mountain">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </nav>
+
+  <p class="sr-only" id="live" aria-live="polite"></p>
+  <audio id="music" src="assets/music.mp3" loop preload="none"></audio>
+</main>
+
+<script>
+(() => {
+  // Mountains in clockwise order around the globe artwork, 60° apart.
+  // Each title image pairs the Indigenous name with the English name.
+  const MOUNTAINS = [
+    { img: 'title-yamnuska',      width: 34.3, label: 'Îyâ Mnathka, Mount Yamnuska' },
+    { img: 'title-cascade',       width: 31.7, label: 'Cascade Mountain' },
+    { img: 'title-rundle',        width: 41.9, label: 'Waskahigan Watchi, Mount Rundle' },
+    { img: 'title-three-sisters', width: 35.0, label: 'Three Sisters' },
+    { img: 'title-temple',        width: 26.3, label: 'Mount Temple' },
+    { img: 'title-castle',        width: 52.0, label: 'Miistukskoowa, Castle Mountain' },
+  ];
+  const STEP = 360 / MOUNTAINS.length;
+  const CLOUD_FACTOR = 0.55;  // clouds drift slower than the globe for depth
+
+  const $ = (id) => document.getElementById(id);
+  const stage = $('stage'), globe = $('globe'), clouds = $('clouds'), zone = $('dragZone');
+  const home = $('home'), name = $('name'), nameImg = $('nameImg'), live = $('live');
+
+  // Preload the name artwork so swaps are instant.
+  MOUNTAINS.forEach(m => { new Image().src = `assets/${m.img}.webp`; });
+
+  // Start like the original: Mount Rundle on top, title screen showing.
+  let rotation = -2 * STEP;
+  let shown = -1;
+  let started = false;
+
+  const indexFor = (rot) => ((Math.round(-rot / STEP) % MOUNTAINS.length) + MOUNTAINS.length) % MOUNTAINS.length;
+
+  function render() {
+    globe.style.transform = `rotate(${rotation}deg)`;
+    clouds.style.transform = `rotate(${rotation * CLOUD_FACTOR}deg)`;
+    const i = indexFor(rotation);
+    zone.setAttribute('aria-valuenow', String(i + 1));
+    zone.setAttribute('aria-valuetext', MOUNTAINS[i].label);
+    if (started && i !== shown) showMountain(i);
+  }
+
+  function showMountain(i) {
+    shown = i;
+    const m = MOUNTAINS[i];
+    home.classList.add('is-hidden');
+    name.classList.add('is-hidden');
+    setTimeout(() => {
+      nameImg.src = `assets/${m.img}.webp`;
+      nameImg.alt = m.label;
+      nameImg.style.setProperty('--w', m.width);
+      name.classList.remove('is-hidden');
+    }, 160);
+    live.textContent = `${m.label}, ${i + 1} of ${MOUNTAINS.length}`;
+    [...dots.children].forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
+  }
+
+  function start() {
+    if (started) return;
+    started = true;
+  }
+
+  function snapTo(rot) {
+    stage.classList.add('snapping');
+    rotation = rot;
+    render();
+  }
+
+  function step(dir) {
+    start();
+    snapTo(Math.round(rotation / STEP) * STEP - dir * STEP);
+  }
+
+  // Dots
+  const dots = $('dots');
+  MOUNTAINS.forEach((m, k) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', m.label);
+    b.setAttribute('aria-current', 'false');
+    b.addEventListener('click', () => {
+      start();
+      // Turn the shortest way round to the chosen mountain.
+      const current = Math.round(rotation / STEP);
+      let delta = (-k - current) % MOUNTAINS.length;
+      if (delta > MOUNTAINS.length / 2) delta -= MOUNTAINS.length;
+      if (delta < -MOUNTAINS.length / 2) delta += MOUNTAINS.length;
+      snapTo((current + delta) * STEP);
+    });
+    dots.appendChild(b);
+  });
+
+  $('next').addEventListener('click', () => step(1));
+  $('prev').addEventListener('click', () => step(-1));
+
+  // Drag to rotate around the globe's centre.
+  let dragging = false, lastAngle = 0;
+  const centre = () => {
+    const r = globe.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  };
+  const angleAt = (e) => {
+    const c = centre();
+    return Math.atan2(e.clientY - c.y, e.clientX - c.x) * 180 / Math.PI;
+  };
+
+  zone.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    stage.classList.remove('snapping');
+    lastAngle = angleAt(e);
+    zone.setPointerCapture(e.pointerId);
+  });
+  zone.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const a = angleAt(e);
+    let d = a - lastAngle;
+    if (d > 180) d -= 360;
+    if (d < -180) d += 360;
+    lastAngle = a;
+    if (Math.abs(d) > 0.2) start();
+    rotation += d;
+    render();
+  });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    snapTo(Math.round(rotation / STEP) * STEP);
+  };
+  zone.addEventListener('pointerup', endDrag);
+  zone.addEventListener('pointercancel', endDrag);
+
+  zone.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); step(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
+  });
+
+  // Background music, off until the learner turns it on.
+  const music = $('music'), sound = $('sound');
+  sound.addEventListener('click', () => {
+    const on = music.paused;
+    if (on) music.play().catch(() => {}); else music.pause();
+    sound.setAttribute('aria-pressed', String(on));
+    sound.setAttribute('aria-label', on ? 'Pause music' : 'Play music');
+    $('waves').style.display = on ? '' : 'none';
+    $('mute').style.display = on ? 'none' : '';
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

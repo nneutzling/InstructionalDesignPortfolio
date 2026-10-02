@@ -553,16 +553,17 @@ class Component extends DCLogic {
     },
     {
       slug: 'bow-valley-mountains', num: '09', accent: '#6fb3d4',
-      title: 'Mountains of the Bow Valley — Storyline Interaction Challenge',
-      context: 'Self-directed Storyline challenge',
+      title: 'Mountains of the Bow Valley — Storyline Interaction, Rebuilt for the Web',
+      context: 'Self-directed interaction challenge',
       outcome: 'Custom dial- and slider-driven interactions with AI-generated visuals and audio',
-      tools: ['Articulate Storyline', 'Dials & sliders', 'AI image generation', 'AI audio generation'],
+      tools: ['Articulate Storyline', 'HTML & JavaScript', 'Claude Code', 'AI image generation', 'AI audio generation'],
       overview: 'A self-directed Storyline challenge built around the peaks of the Bow Valley, created to push my command of Storyline\u2019s interactive controls. The piece uses dials and sliders as the core navigation and discovery mechanic, letting learners actively explore the mountains rather than passively click through screens. I paired the interaction work with AI-generated mountain imagery and AI-created audio to produce a fully realized, atmospheric experience on my own.',
       challenge: 'Dials and sliders are some of Storyline\u2019s most powerful but least forgiving controls — they require careful state management, variable logic, and triggers to feel smooth and intuitive. The challenge was to make these inputs drive meaningful, responsive content while keeping the experience approachable, and to source cohesive visuals and audio for a personal project without a media budget or production team.',
       role: 'I designed and built the entire piece solo — wiring dials and sliders to variables and triggers so learner input changes what is shown and heard, and tuning the interaction states until they felt natural. I used AI image generation to create the Bow Valley mountain visuals and AI tools to generate the accompanying audio, then assembled and refined everything in Storyline.',
       approach: 'Treat interaction as the content — let dials and sliders turn exploration into the learning experience, supported by atmosphere (visuals and sound) that makes the place feel real.',
       approachPoints: [
         'Mapped dial and slider states to Storyline variables and triggers',
+        'Rebuilt the interaction in HTML and JavaScript so it runs anywhere: drag or swipe to spin the world, snap to each mountain, with keyboard and screen-reader support',
         'Built responsive content that reacts to learner input in real time',
         'Tuned interaction feel and feedback for smooth, intuitive control',
         'Generated cohesive Bow Valley mountain imagery with AI tools',
@@ -570,13 +571,14 @@ class Component extends DCLogic {
         'Assembled, tested, and refined the full experience in Storyline',
       ],
       statusLabel: 'Status & next steps',
-      status: 'A personal Storyline challenge built to sharpen interactive-control skills and experiment with AI-generated media. Next, I\u2019d like to expand it to include more information about each mountain and develop it into a full interactive experience.',
+      status: 'Originally built in Storyline, then rebuilt as a standalone web interaction from the same artwork and audio so it no longer depends on an authoring-tool licence. It now works on desktop and mobile. Next, I\u2019d like to add more information about each mountain and develop it into a full interactive experience.',
       demonstrates: 'Advanced Storyline interactivity and creative resourcefulness: dial- and slider-driven mechanics, variable and trigger logic, and thoughtful use of AI to generate visuals and audio for a polished, self-produced learning experience.',
       shots: [
         { img: 'images/bow-yamnuska.png', label: 'Îyâ Mnathka — Mount Yamnuska', pos: 'center' },
         { img: 'images/bow-castle.png', label: 'Miistukskoowa — Castle Mountain', pos: 'center' },
       ],
       links: [
+        { type: 'live', label: 'Try the interaction', url: 'courses/bow-valley/index.html' },
       ],
     },
   ];
