@@ -4,7 +4,8 @@ Static portfolio site, ready for GitHub Pages.
 
 - `index.html` — portfolio page (case studies, process, skills, contact)
 - `support.js` — runtime the page needs; keep it next to `index.html`
-- `images/` — screenshots and profile photo
+- `images/` — screenshots and profile watermark
+- `assets/shader-banner.js` — animated ShaderGradient background for the "Let's work together" banner (source in `tools/shader-banner/`)
 - `courses/` — hosted eLearning modules, one folder each, linked from the case studies
   - `alpine-club/` — Alpine Club of Canada Trip Leader Guide, standalone web export (public)
   - `bow-valley/` — Mountains of the Bow Valley, web rebuild of the Storyline interaction (public)

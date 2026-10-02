@@ -3,9 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{if(navigator.userAgentData&&navigator.userAgentData.brands.some(function(b){return /Chrom/.test(b.brand)}))document.documentElement.classList.add("liquid")}catch(e){}</script>
 <script src="./support.js"></script>
+<script src="./assets/shader-banner.js" defer></script>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid-glass" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.011 0.017" numOctaves="2" seed="7" result="noise"/><feGaussianBlur in="noise" stdDeviation="2.2" result="soft"/><feDisplacementMap in="SourceGraphic" in2="soft" scale="16" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +28,24 @@
   .hero-stars .shooting-star::after{content:"";position:absolute;left:-1px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.7)}
   @keyframes shoot{0%{opacity:0;transform:rotate(-24deg) translateX(0)}1%{opacity:1}7%{opacity:0;transform:rotate(-24deg) translateX(-340px)}100%{opacity:0;transform:rotate(-24deg) translateX(-340px)}}
   @media (prefers-reduced-motion: reduce){.hero-stars .shooting-star{display:none}}
+  /* Liquid glass: frosted blur everywhere, plus a subtle refraction filter in Chromium browsers */
+  .glass{position:relative;isolation:isolate;overflow:hidden;--tint:.22;--blur:10px;background:rgba(255,255,255,var(--tint));border:1px solid rgba(255,255,255,.55);-webkit-backdrop-filter:blur(var(--blur)) saturate(170%);backdrop-filter:blur(var(--blur)) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(255,255,255,.2),inset 0 0 16px rgba(255,255,255,.22),0 8px 24px rgba(13,23,48,.18);transition:transform .2s ease,box-shadow .2s ease}
+  .glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;background:linear-gradient(135deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,0) 42%,rgba(255,255,255,0) 72%,rgba(255,255,255,.2) 100%)}
+  .glass-btn{--tint:.5}
+  .glass-btn:hover{transform:scale(1.05);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.25),inset 0 0 18px rgba(255,255,255,.3),0 10px 28px rgba(13,23,48,.24)}
+  .glass-dark{--tint:.09;--blur:8px;border-color:rgba(255,255,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 14px rgba(255,255,255,.08),0 6px 20px rgba(0,0,0,.18)}
+  .glass-dark::before{background:linear-gradient(135deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,0) 45%)}
+  /* Tinted glass for coloured buttons: keeps the button colour (and text contrast), adds the glass rim, highlights and sheen */
+  .glass-tint{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(255,255,255,.45) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(0,0,0,.08),inset 0 0 14px rgba(255,255,255,.14),0 10px 24px -8px rgba(13,23,48,.35) !important;transition:transform .2s ease,box-shadow .2s ease}
+  .glass-tint::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;background:linear-gradient(160deg,rgba(255,255,255,.42) 0%,rgba(255,255,255,.08) 38%,rgba(255,255,255,0) 55%)}
+  .glass-tint::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.35),rgba(255,255,255,0));transform:skewX(-18deg);transition:left .6s ease}
+  .glass-tint:hover{transform:translateY(-2px)}
+  .glass-tint:hover::after{left:120%}
+  .shader-bg{position:absolute;inset:0;z-index:0;opacity:0;transition:opacity 1.2s ease}
+  .shader-bg.is-ready{opacity:1}
+  .liquid .glass{backdrop-filter:url(#liquid-glass) blur(var(--blur)) saturate(170%)}
+  @media (prefers-reduced-motion: reduce){.glass-tint::after{display:none}.glass-tint:hover{transform:none}}
+  @media (prefers-reduced-transparency: reduce){.glass{background:rgba(255,255,255,.95);-webkit-backdrop-filter:none;backdrop-filter:none}.glass-dark{background:#22345a}}
   @media (prefers-reduced-motion: reduce){*{animation:none !important}}
   @media (max-width: 760px){.about-grid{grid-template-columns:1fr !important;gap:36px !important}.about-card{max-width:260px !important;margin:0 auto;aspect-ratio:4/5 !important}}
 </style>
@@ -37,7 +58,7 @@
     <span style="display:inline-flex;width:22px;height:22px;border-radius:7px;background:#f1907f;align-items:center;justify-content:center;"><span style="display:inline-block;width:8px;height:8px;background:#1b2542;border-radius:2px;transform:rotate(45deg);"></span></span>Nicole Neutzling
   </button>
 
-  <button onClick="{{ toggleMenu }}" aria-label="Open menu" style="position:fixed;top:20px;right:24px;z-index:70;width:50px;height:50px;border-radius:50%;background:#ffffff;border:1.5px solid rgba(27,37,66,.12);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;box-shadow:0 8px 22px rgba(27,37,66,.14);">
+  <button class="glass glass-btn" onClick="{{ toggleMenu }}" aria-label="Open menu" style="position:fixed;top:20px;right:24px;z-index:70;width:50px;height:50px;border-radius:50%;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;">
     <span style="display:block;width:18px;height:2px;border-radius:2px;background:#1b2542;"></span>
     <span style="display:block;width:18px;height:2px;border-radius:2px;background:#1b2542;"></span>
     <span style="display:block;width:12px;height:2px;border-radius:2px;background:#f1907f;"></span>
@@ -120,7 +141,7 @@
       <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#ffffff;font-size:clamp(37px,5.7vw,72px);line-height:1.01;letter-spacing:-0.038em;text-wrap:balance;">Human-Centred Learning, Thoughtfully Powered by Technology</h1>
       <p style="margin:26px 0 0;font-size:clamp(17px,2.1vw,21px);line-height:1.55;color:#aeb9d4;max-width:560px;font-weight:500;">I create eLearning and training experiences that make complex information easier to understand, apply, and remember, using instructional design, storytelling, and emerging AI tools.</p>
       <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;">
-        <a href="#work" onClick="{{ goWork }}" style="display:inline-flex;align-items:center;gap:9px;background:#f1907f;color:#1b2542;font-weight:700;font-size:16px;text-decoration:none;padding:15px 30px;border-radius:100px;box-shadow:0 10px 26px rgba(241,144,127,.32);">View my work →</a>
+        <a class="glass-tint" href="#work" onClick="{{ goWork }}" style="display:inline-flex;align-items:center;gap:9px;background:#f1907f;color:#1b2542;font-weight:700;font-size:16px;text-decoration:none;padding:15px 30px;border-radius:100px;box-shadow:0 10px 26px rgba(241,144,127,.32);">View my work →</a>
       </div>
       
     </div>
@@ -272,13 +293,14 @@
 
   <!-- ===== HIRE-ME BANNER ===== -->
   <section style="padding:64px clamp(16px,4vw,40px) 90px;">
-    <div data-reveal="" style="max-width:1120px;margin:0 auto;border-radius:30px;overflow:hidden;background:linear-gradient(118deg,#ffc27a 0%,#ffb05a 26%,#f1907f 62%,#b97f9e 100%);padding:clamp(40px,6vw,72px) clamp(28px,5vw,64px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px;">
-      <div style="max-width:680px;">
+    <div data-reveal="" style="max-width:1120px;margin:0 auto;border-radius:30px;overflow:hidden;position:relative;isolation:isolate;background:linear-gradient(118deg,#ffc27a 0%,#ffb05a 26%,#f1907f 62%,#b97f9e 100%);padding:clamp(40px,6vw,72px) clamp(28px,5vw,64px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px;">
+      <div data-shader-bg aria-hidden="true" class="shader-bg"></div>
+      <div style="max-width:680px;position:relative;z-index:1;">
         <div style="font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:#1b2542;font-weight:700;margin-bottom:14px;opacity:.7;">Let's work together</div>
         <h2 style="margin:0 0 16px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#1b2542;font-size:clamp(28px,4.2vw,46px);line-height:1.06;letter-spacing:-0.035em;">Need help bringing AI into your learning, or building learning people actually enjoy?</h2>
         <p style="margin:0;font-size:17px;line-height:1.55;color:#1b2542;opacity:.82;max-width:600px;">From custom AI-built assessment tools to scenario-based courses and co-designed programs, I help teams create learning that's engaging, accessible, and built to work.</p>
       </div>
-      <a href="#contact" onClick="{{ goContact }}" style="flex:none;display:inline-flex;align-items:center;gap:9px;background:#1b2542;color:#fff;font-weight:700;font-size:17px;text-decoration:none;padding:16px 34px;border-radius:100px;box-shadow:0 14px 34px -10px rgba(27,37,66,.5);">Let's talk →</a>
+      <a class="glass-tint" href="#contact" onClick="{{ goContact }}" style="z-index:1;flex:none;display:inline-flex;align-items:center;gap:9px;background:#1b2542;color:#fff;font-weight:700;font-size:17px;text-decoration:none;padding:16px 34px;border-radius:100px;box-shadow:0 14px 34px -10px rgba(27,37,66,.5);">Let's talk →</a>
     </div>
   </section>
 
@@ -288,7 +310,7 @@
     <div style="position:relative;max-width:1120px;margin:0 auto;padding:80px clamp(20px,5vw,40px);min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;">
       <span style="display:inline-flex;width:34px;height:34px;border-radius:10px;background:#f1907f;align-items:center;justify-content:center;"><span style="display:inline-block;width:12px;height:12px;background:#141d35;border-radius:3px;transform:rotate(45deg);"></span></span>
       
-      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.05;letter-spacing:-0.03em;color:#fff;max-width:620px;">Curious design for real-world learning.</h2><a href="mailto:n.neutzling@gmail.com" style="display:inline-flex;align-items:center;gap:9px;background:#f1907f;color:#1b2542;font-weight:700;font-size:17px;text-decoration:none;padding:16px 36px;border-radius:100px;box-shadow:0 14px 34px -10px rgba(241,144,127,.6);">Email me →</a>
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.05;letter-spacing:-0.03em;color:#fff;max-width:620px;">Curious design for real-world learning.</h2><a class="glass-tint" href="mailto:n.neutzling@gmail.com" style="display:inline-flex;align-items:center;gap:9px;background:#f1907f;color:#1b2542;font-weight:700;font-size:17px;text-decoration:none;padding:16px 36px;border-radius:100px;box-shadow:0 14px 34px -10px rgba(241,144,127,.6);">Email me →</a>
       <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:center;font-size:15px;">
         <a href="https://www.linkedin.com/in/nicoleneutzling" target="_blank" rel="noopener" style="color:#ffb05a;text-decoration:none;font-weight:600;border-bottom:2px solid rgba(255,176,90,.5);padding-bottom:2px;">LinkedIn ↗</a>
         <a href="mailto:n.neutzling@gmail.com" style="color:#ffb05a;text-decoration:none;font-weight:600;border-bottom:2px solid rgba(255,176,90,.5);padding-bottom:2px;">n.neutzling@gmail.com</a>
@@ -305,7 +327,7 @@
     <div onClick="{{ closeProject }}" style="position:fixed;inset:0;z-index:120;background:rgba(20,29,53,.62);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:clamp(14px,5vh,56px) 14px;animation:scrimin .2s ease both;">
       <article onClick="{{ stop }}" style="background:#ffffff;border-radius:26px;max-width:860px;width:100%;overflow:hidden;box-shadow:0 40px 90px -30px rgba(20,29,53,.6);">
         <div style="position:relative;background:{{ sel.headBg }};padding:36px clamp(22px,4vw,40px) 32px;">
-          <button onClick="{{ closeProject }}" aria-label="Close" style="position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:22px;line-height:1;color:#1b2542;">×</button>
+          <button class="glass glass-btn" onClick="{{ closeProject }}" aria-label="Close" style="position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:22px;line-height:1;color:#1b2542;">×</button>
           <div style="font-size:11.5px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;color:{{ sel.headSub }};margin-bottom:14px;">{{ sel.context }}</div>
           <h2 style="margin:0 0 18px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(26px,4.2vw,38px);line-height:1.06;letter-spacing:-0.03em;color:{{ sel.headText }};max-width:92%;">{{ sel.title }}</h2>
           <div style="display:inline-flex;align-items:center;gap:9px;background:#ffffff;border-radius:14px;padding:11px 16px;">
@@ -363,7 +385,7 @@
 
           <div style="display:flex;flex-wrap:wrap;gap:11px;margin-top:28px;padding-top:24px;border-top:1px solid rgba(27,37,66,.08);">
             <sc-for list="{{ sel.links }}" as="l" hint-placeholder-count="2">
-              <a href="{{ l.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;font-size:14px;padding:12px 18px;border-radius:100px;background:{{ l.bg }};color:{{ l.color }};border:{{ l.border }};">{{ l.glyph }} {{ l.label }} ↗</a>
+              <a class="glass-tint" href="{{ l.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;font-size:14px;padding:12px 18px;border-radius:100px;background:{{ l.bg }};color:{{ l.color }};border:{{ l.border }};">{{ l.glyph }} {{ l.label }} ↗</a>
             </sc-for>
           </div>
         </div>
@@ -683,17 +705,17 @@ class Component extends DCLogic {
     const m = {
       'articulate-review': { glyph: 'A', title: 'Articulate Review demo', bg: '#f1907f', fg: '#fff' },
       'github': { glyph: '\u2039\u203a', title: 'Code on GitHub', bg: '#1b2542', fg: '#fff' },
-      'live': { glyph: '\u2197', title: 'Live demo', bg: '#6fb3d4', fg: '#fff' },
+      'live': { glyph: '\u2197', title: 'Live demo', bg: '#256488', fg: '#fff' },
       'video': { glyph: '\u25B6', title: 'Video', bg: '#ffb05a', fg: '#1b2542' },
       'storyboard': { glyph: '\u25A6', title: 'Example storyboard', bg: '#34456b', fg: '#fff' },
       'doc': { glyph: '\u25A4', title: 'Document', bg: '#9ed94d', fg: '#1b2542' },
       'website': { glyph: '\u2197', title: 'Program website', bg: '#1b2542', fg: '#fff' },
     };
-    return m[link.type] || { glyph: '\u2197', title: 'Link', bg: '#6fb3d4', fg: '#fff' };
+    return m[link.type] || { glyph: '\u2197', title: 'Link', bg: '#256488', fg: '#fff' };
   }
   linkStyle(link) {
     if (link.type === 'github') return { bg: '#1b2542', color: '#fff', border: 'none', glyph: '\u2039\u203a' };
-    if (link.type === 'live') return { bg: '#6fb3d4', color: '#fff', border: 'none', glyph: '' };
+    if (link.type === 'live') return { bg: '#256488', color: '#fff', border: 'none', glyph: '' };
     if (link.type === 'video') return { bg: '#ffb05a', color: '#1b2542', border: 'none', glyph: '\u25B6' };
     if (link.type === 'storyboard') return { bg: '#34456b', color: '#fff', border: 'none', glyph: '\u25A6' };
     if (link.type === 'doc') return { bg: '#9ed94d', color: '#1b2542', border: 'none', glyph: '\u25A4' };
