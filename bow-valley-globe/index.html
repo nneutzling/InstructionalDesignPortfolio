@@ -80,6 +80,7 @@
   .hint { font-family: var(--label); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--paper); text-shadow: 0 1px 2px rgba(26,34,56,.45); }
   .credit { font-size: 11px; line-height: 1.4; color: var(--paper); opacity: .85; text-shadow: 0 1px 2px rgba(26,34,56,.5); }
   .credit .short { display: none; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
   .pill { white-space: nowrap; font-family: var(--label); font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--lake); background: var(--paper); border: 2px solid var(--lake); border-radius: 100px; padding: 8px 14px 6px; cursor: pointer; box-shadow: 0 3px 0 rgba(26,34,56,.22); }
   .pill[aria-pressed="true"] { background: var(--lake); color: var(--paper); }
   .pill:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
@@ -132,8 +133,11 @@
   </section>
 
   <div class="foot">
-    <button class="pill" id="exag" aria-pressed="false">Heights: true scale</button>
-    <div class="hint" id="hint">Drag the planet or turn the dial to travel west</div>
+    <div class="pills">
+      <button class="pill" id="exag" aria-pressed="false">Heights: true scale</button>
+      <button class="pill" id="reset" hidden>Reset view</button>
+    </div>
+    <div class="hint" id="hint">Drag to look around · scroll to zoom · turn the dial to travel west</div>
     <div class="credit"><span class="long">Terrain: Canadian Digital Elevation Model, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.</span><span class="short">Terrain: NRCan CDEM · Open Government Licence – Canada</span></div>
   </div>
 
@@ -416,18 +420,51 @@ for (let i = 0; i < 14; i++) {
   cloudRing.add(c);
 }
 
+// Bald eagle: dark brown body and wings, white head and tail, yellow beak and feet.
+// Each wing has an arm and a hand that bend at the wrist, with fingered primary feathers at the tip.
 const eagle = new THREE.Group();
 {
-  const mat = new THREE.MeshStandardMaterial({ color: 0x4a2f1d, side: THREE.DoubleSide, flatShading: true });
-  const wingGeo = new THREE.BufferGeometry();
-  wingGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, -0.14, 0, 0, 0.16, 0.85, 0.05, 0.02], 3));
-  wingGeo.computeVertexNormals();
-  const L = new THREE.Mesh(wingGeo, mat), Rw = new THREE.Mesh(wingGeo, mat);
-  Rw.scale.x = -1;
-  const body = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.5, 5), mat); body.rotation.x = Math.PI / 2;
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), new THREE.MeshStandardMaterial({ color: 0xf3efe6 })); head.position.z = 0.28;
-  eagle.add(L, Rw, body, head);
-  eagle.userData.wings = [L, Rw];
+  const mat = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...extra });
+  const brown = mat(0x3a2416), dark = mat(0x24160d, { side: THREE.DoubleSide }), covert = mat(0x5a3a22, { side: THREE.DoubleSide });
+  const white = mat(0xf4f1e8), whiteFlat = mat(0xf1ede2, { side: THREE.DoubleSide }), yellow = mat(0xe5b62b), black = mat(0x0d0d0d);
+  // A flat shape drawn in (x, forward) and laid into the bird's horizontal plane.
+  const flat = pts => { const s = new THREE.Shape(); pts.forEach(([x, z], i) => (i ? s.lineTo : s.moveTo).call(s, x, z)); return new THREE.ShapeGeometry(s).rotateX(Math.PI / 2); };
+  const blob = (sx, sy, sz, m) => { const b = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), m); b.scale.set(sx, sy, sz); return b; };
+
+  const body = blob(0.075, 0.068, 0.24, brown);
+  const chest = blob(0.082, 0.078, 0.13, brown); chest.position.set(0, -0.012, 0.07);
+  const neck = blob(0.062, 0.062, 0.08, white); neck.position.set(0, 0.02, 0.19);
+  const head = blob(0.06, 0.057, 0.07, white); head.position.set(0, 0.035, 0.245);
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.075, 10), yellow);
+  beak.rotation.x = Math.PI / 2 + 0.35; beak.position.set(0, 0.022, 0.315);
+  const eyes = [-1, 1].map(s => { const e = blob(0.009, 0.009, 0.009, black); e.position.set(s * 0.043, 0.05, 0.27); return e; });
+  const feet = [-1, 1].map(s => { const f = new THREE.Mesh(new THREE.CapsuleGeometry(0.013, 0.05, 4, 8), yellow); f.rotation.x = Math.PI / 2; f.position.set(s * 0.03, -0.055, -0.13); return f; });
+  const tail = new THREE.Mesh(flat([[-0.045, 0], [0.045, 0], [0.1, -0.16], [0.06, -0.195], [0, -0.205], [-0.06, -0.195], [-0.1, -0.16]]), whiteFlat);
+  tail.position.set(0, 0.005, -0.2);
+  eagle.add(body, chest, neck, head, beak, ...eyes, ...feet, tail);
+
+  const wings = [-1, 1].map(side => {
+    const mirror = new THREE.Group(); mirror.scale.x = side;
+    const arm = new THREE.Group(); arm.position.set(0.05, 0.025, 0.05);
+    arm.add(new THREE.Mesh(flat([[0, 0.11], [0.12, 0.12], [0.26, 0.11], [0.36, 0.09], [0.36, -0.15], [0.31, -0.17], [0.27, -0.15], [0.23, -0.18],
+      [0.19, -0.16], [0.15, -0.19], [0.11, -0.17], [0.07, -0.19], [0.03, -0.16], [0, -0.12]]), dark));
+    const coverts = new THREE.Mesh(flat([[0, 0.11], [0.12, 0.12], [0.26, 0.11], [0.36, 0.09], [0.36, -0.03], [0.2, -0.05], [0, -0.02]]), covert);
+    coverts.position.y = 0.004; arm.add(coverts);
+    const hand = new THREE.Group(); hand.position.x = 0.36;
+    hand.add(new THREE.Mesh(flat([[0, 0.09], [0.1, 0.075], [0.17, 0.05], [0.19, -0.06], [0.1, -0.13], [0, -0.15]]), dark));
+    // Six primaries, splayed backward and curling up at the tips.
+    const ellipse = [...Array(14)].map((_, i) => { const a = (i / 14) * Math.PI * 2; return [0.12 + Math.cos(a) * 0.12, Math.sin(a) * 0.019]; });
+    for (let k = 0; k < 6; k++) {
+      const f = new THREE.Mesh(flat(ellipse), dark);
+      f.position.set(0.1 + k * 0.012, 0, 0.05 - k * 0.036);
+      f.rotation.set(0, 0.05 + k * 0.17, 0.06 + k * 0.02);
+      hand.add(f);
+    }
+    arm.add(hand); mirror.add(arm); eagle.add(mirror);
+    return { arm, hand };
+  });
+  eagle.userData = { wings, tail };
+  eagle.scale.setScalar(0.75);
   scene.add(eagle);
 }
 
@@ -495,12 +532,35 @@ function showPeak(i) {
 }
 const snap = () => { target = Math.round(target / STEP) * STEP; };
 const go = d => { target = Math.round(target / STEP) * STEP + d * STEP; };
-el('next').addEventListener('click', () => go(1));
-el('prev').addEventListener('click', () => go(-1));
+// Free look: yaw circles the planet around the axis through the top, so you walk around the active peak;
+// pitch tumbles the planet toward or away from you. Both go a full 360°. Zoom moves the camera in and out.
+let yaw = 0, yawT = 0, pitch = 0, pitchT = 0, zoom = 1, zoomT = 1;
+const TAU = Math.PI * 2, wrap = a => a - TAU * Math.round(a / TAU);
+const resetBtn = el('reset');
+const viewMoved = () => { resetBtn.hidden = Math.abs(wrap(yawT)) < 0.01 && Math.abs(wrap(pitchT)) < 0.01 && Math.abs(zoomT - 1) < 0.01; };
+const look = (dy, dp) => { yawT += dy; pitchT += dp; viewMoved(); dismissHint(); };
+const zoomBy = f => { zoomT = Math.min(1.7, Math.max(0.4, zoomT * f)); viewMoved(); };
+function resetView() {
+  yaw = wrap(yaw); pitch = wrap(pitch);   // take the short way home
+  yawT = pitchT = 0; zoomT = 1; resetBtn.hidden = true;
+}
+resetBtn.addEventListener('click', resetView);
+el('next').addEventListener('click', () => { go(1); resetView(); });
+el('prev').addEventListener('click', () => { go(-1); resetView(); });
 addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { go(1); e.preventDefault(); }
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { go(-1); e.preventDefault(); }
-  if (e.key === 'Home') target = Math.floor(target / (Math.PI * 2)) * Math.PI * 2;
+  const k = e.key, onDial = document.activeElement === dial;
+  if (k === 'ArrowRight' || (onDial && k === 'ArrowDown')) { go(1); resetView(); }
+  else if (k === 'ArrowLeft' || (onDial && k === 'ArrowUp')) { go(-1); resetView(); }
+  else if (k === 'Home') { target = Math.floor(target / (Math.PI * 2)) * Math.PI * 2; resetView(); }
+  else if (k === 'a' || k === 'A') look(-0.35, 0);
+  else if (k === 'd' || k === 'D') look(0.35, 0);
+  else if (k === 'w' || k === 'W' || k === 'ArrowUp') look(0, -0.3);
+  else if (k === 's' || k === 'S' || k === 'ArrowDown') look(0, 0.3);
+  else if (k === '+' || k === '=') zoomBy(0.85);
+  else if (k === '-' || k === '_') zoomBy(1 / 0.85);
+  else if (k === 'r' || k === 'R') resetView();
+  else return;
+  e.preventDefault();
 });
 
 const exagBtn = el('exag');
@@ -513,22 +573,37 @@ exagBtn.addEventListener('click', () => {
 let hinted = false;
 const dismissHint = () => { if (!hinted) { hinted = true; el('hint').hidden = true; } };
 
-// Drag the planet: horizontal movement turns it like a wheel.
-let drag = null;
-canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX }; canvas.setPointerCapture(e.pointerId); canvas.classList.add('dragging'); dismissHint(); });
+// Drag to look around; pinch or scroll to zoom.
+const touches = new Map();
+let pinch = null;
+const spread = () => { const [a, b] = [...touches.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+canvas.addEventListener('pointerdown', e => {
+  touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  canvas.setPointerCapture(e.pointerId); canvas.classList.add('dragging'); dismissHint();
+  if (touches.size === 2) pinch = { d: spread(), z: zoomT };
+});
 canvas.addEventListener('pointermove', e => {
   pointer.x = e.clientX / innerWidth * 2 - 1; pointer.y = e.clientY / innerHeight * 2 - 1;
-  if (!drag) return;
-  target -= (e.clientX - drag.x) * 0.0065; drag.x = e.clientX;
+  const t = touches.get(e.pointerId);
+  if (!t) return;
+  const dx = e.clientX - t.x, dy = e.clientY - t.y;
+  t.x = e.clientX; t.y = e.clientY;
+  if (touches.size === 1) look(dx * 0.008, dy * 0.006);
+  else if (pinch) { zoomT = pinch.z; zoomBy(pinch.d / Math.max(1, spread())); }
 });
-const endDrag = () => { if (drag) { drag = null; canvas.classList.remove('dragging'); snap(); } };
+const endDrag = e => {
+  touches.delete(e.pointerId);
+  if (touches.size < 2) pinch = null;
+  if (!touches.size) canvas.classList.remove('dragging');
+};
 canvas.addEventListener('pointerup', endDrag);
 canvas.addEventListener('pointercancel', endDrag);
+canvas.addEventListener('wheel', e => { e.preventDefault(); zoomBy(Math.exp(e.deltaY * 0.0012)); dismissHint(); }, { passive: false });
 
 // Turn the dial: one full turn of the knob is one full turn of the planet.
 let dialDrag = null;
 const dialAngle = e => { const r = dial.getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))); };
-dial.addEventListener('pointerdown', e => { dialDrag = dialAngle(e); dial.setPointerCapture(e.pointerId); dismissHint(); });
+dial.addEventListener('pointerdown', e => { dialDrag = dialAngle(e); dial.setPointerCapture(e.pointerId); dismissHint(); resetView(); });
 dial.addEventListener('pointermove', e => {
   if (dialDrag === null) return;
   const a = dialAngle(e); let d = a - dialDrag;
@@ -559,12 +634,33 @@ function resize() {
 addEventListener('resize', resize);
 resize();
 
+// The eagle soars in a wide circle, banking into the turn, with a short burst of wingbeats every few seconds.
+const pathAt = (a, v) => v.set(Math.cos(a) * 4.4, R + 3.1 + Math.sin(a * 2.3) * 0.25, Math.sin(a) * 2.8 + 1);
+const eaglePos = new THREE.Vector3(), eagleAhead = new THREE.Vector3();
+function flyEagle(t) {
+  const a = t * 0.3;
+  eagle.position.copy(pathAt(a, eaglePos));
+  eagle.lookAt(pathAt(a + 0.04, eagleAhead));
+  eagle.rotateZ(0.35);
+  const cyc = t % 7, beat = cyc < 1.5 ? Math.sin(Math.PI * cyc / 1.5) : 0, ph = t * Math.PI * 4.4;
+  const arm = 0.12 + beat * Math.sin(ph) * 0.6 + Math.sin(t * 1.3) * 0.025;
+  const hand = 0.04 + beat * Math.sin(ph - 0.9) * 0.5;
+  eagle.position.y -= beat * Math.sin(ph) * 0.02;
+  eagle.userData.wings.forEach(w => { w.arm.rotation.z = arm; w.hand.rotation.z = hand; });
+  eagle.userData.tail.rotation.z = -0.1;
+}
+
 // ---------- Loop
 const clock = new THREE.Clock();
+const qPitch = new THREE.Quaternion(), qYaw = new THREE.Quaternion(), qWheel = new THREE.Quaternion();
+const AX = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
 function frame() {
   const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
   phi += (target - phi) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 6));
-  planet.rotation.z = phi;
+  const ease = reduceMotion ? 1 : 1 - Math.exp(-dt * 7);
+  yaw += (yawT - yaw) * ease; pitch += (pitchT - pitch) * ease; zoom += (zoomT - zoom) * ease;
+  qPitch.setFromAxisAngle(AX.x, pitch); qYaw.setFromAxisAngle(AX.y, yaw); qWheel.setFromAxisAngle(AX.z, phi);
+  planet.quaternion.copy(qPitch).multiply(qYaw).multiply(qWheel);
   if (Math.abs(exagTarget - exag) > 0.002) {
     exag = reduceMotion ? exagTarget : exag + (exagTarget - exag) * (1 - Math.exp(-dt * 5));
     tiles.forEach(t => t.setExag(exag));
@@ -575,21 +671,16 @@ function frame() {
   const sway = reduceMotion ? 0 : 1;
   cam.x += (pointer.x * 1.6 * sway - cam.x) * 0.04;
   cam.y += (pointer.y * 0.8 * sway - cam.y) * 0.04;
-  const dist = portrait ? 16 : 14.5;
-  camera.position.set(cam.x * 0.6, R + 4.6 - cam.y * 0.6, dist);
+  const dist = (portrait ? 16 : 14.5) * zoom;
+  camera.position.set(cam.x * 0.6, R + 0.7 + (3.9 - cam.y * 0.6) * zoom, dist);
   camera.lookAt(0, R + 0.7, 0);
 
   if (!reduceMotion) {
     cloudRing.rotation.z = -t * 0.025;
-    const ea = t * 0.35;
-    eagle.position.set(Math.cos(ea) * 4.2, R + 3.2 + Math.sin(t * 0.8) * 0.3, Math.sin(ea) * 2.6 + 1);
-    eagle.rotation.y = -ea;
-    eagle.rotation.z = Math.sin(ea) * 0.25;
-    const flap = Math.sin(t * 7) * 0.45;
-    eagle.userData.wings[0].rotation.z = flap; eagle.userData.wings[1].rotation.z = -flap;
+    flyEagle(t);
     mountains.forEach(g => { const f = g.userData.fire; if (f) { const k = 0.8 + Math.sin(t * 13) * 0.12 + Math.sin(t * 29) * 0.08; f.light.intensity = 0.8 * k; f.fire.scale.y = k * 1.2; } });
   } else {
-    eagle.position.set(3.5, R + 3.4, 2);
+    flyEagle(0);
   }
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
