@@ -10,6 +10,7 @@ Static portfolio site, ready for GitHub Pages.
   - `bow-valley/` — Mountains of the Bow Valley, web rebuild of the Storyline interaction (public)
   - `peak-pmp-sample/` — 8-question public sample of the Peak PMP baseline quiz (full banks stay private)
   - `larch-salmon-game/` — Swim Upstream game from the Larch & Lichen sockeye lesson (copied from the Larch & Lichen repo)
+  - `larch-life-cycle/` — Sockeye life cycle explorer from the same lesson (copied from the Larch & Lichen repo)
 
 REDP, PHSA and IPAC are client work: show them with screenshots and video only, never the course files.
 
